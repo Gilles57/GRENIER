@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Le Grenier de Gilles{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+
+    <div class="jumbotron  jumbotron-fluid my-3 p-3 text-center">
+        <h1 class="display-4 fw-bold">Bienvenue sur mon site !</h1>
+        <p class="lead">Il regroupe différentes rubriques qui n'ont qu'un seul point commun entre elles : c'est que je
+            m'y intéresse.</p>
+    </div>
+
+    <div class="container">
+
+        <div style="display: flex; flex-flow: row wrap;justify-content: space-around;">
+
+            <a href="#" class="text-decoration-none">
+                <div class="card" style="width: 18rem; height: 23rem">
+                    <img class="card-img-top"
+                         src="{{ asset('/images//cards/DALL-Recettes.png') }}"
+                         alt="Card image Recettes"
+                         style="height: 16rem">
+                    <div class="card-body">
+                        <h5 class="card-title">Recettes</h5>
+                        <p class="card-text">Mes recettes préférées.</p>
+                    </div>
+                </div>
+            </a>
+            <a href="#" class="text-decoration-none">
+                <div class="card" style="width: 18rem; height: 23rem">
+                    <img class="card-img-top"
+                         src="{{ asset('/images//cards/DALL-Films.png') }}"
+                         alt="Card image Films"
+                         style="height: 16rem">
+                    <div class="card-body">
+                        <h5 class="card-title">Films</h5>
+                        <p class="card-text">Mes films, vu ou à voir.</p>
+                    </div>
+                </div>
+            </a>
+            <a href="#" class="text-decoration-none">
+                <div class="card" style="width: 18rem; height: 23rem">
+                    <img class="card-img-top"
+                         src="{{ asset('/images//cards/DALL-Informatique.png') }}"
+                         alt="Card image Informatique"
+                         style="height: 16rem">
+                    <div class="card-body">
+                        <h5 class="card-title">Informatique</h5>
+                        <p class="card-text">Du code, des liens, des astuces, etc.</p>
+                    </div>
+                </div>
+            </a>
+            <a href="#" class="text-decoration-none">
+                <div class="card" style="width: 18rem; height: 23rem">
+                    <img class="card-img-top"
+                         src="{{ asset('/images//cards/Divers.jpg') }}"
+                         alt="Card image Divers"
+                         style="height: 16rem">
+                    <div class="card-body">
+                        <h5 class="card-title">Divers</h5>
+                        <p class="card-text">Tout ce qui n'entre pas dans les autres catégories !</p>
+                    </div>
+                </div>
+            </a>
+
+
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} - Accueil{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+    <div class="contenu1">
+        <div class="row">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert-{{ label }} alert " style="text-align: center">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+
+        <h1 style="text-align: center; margin-top:0">Modules en cours de développement </h1>
+
+
+        <div style="display: flex; flex-flow: row wrap;justify-content: space-around;">
+        <ul class="flex-container">
+            <li class="flex-item fait"><a href="#">Mails</a></li>
+            <li class="flex-item fait"><a href="#">Autocomplétion d'adresses</a></li>
+            <li class="flex-item prevu"><a href="{{ path('app_home') }}">Autocomplétion depuis la BDD</a></li>
+            <li class="flex-item encours"><a href="{{ path('app_home') }}">Gestion de fichiers</a></li>
+            <li class="flex-item"><a href="{{ path('app_home') }}">Menu x</a></li>
+            <li class="flex-item"><a href="{{ path('app_home') }}">Menu x</a></li>
+            <li class="flex-item"><a href="{{ path('app_home') }}">Menu x</a></li>
+            <li class="flex-item"><a href="{{ path('app_home') }}">Menu x</a></li>
+            <li class="flex-item"><a href="{{ path('app_home') }}">Menu x</a></li>
+        </ul>
+
+        {#</div>#}
+    </div>
+{% endblock %}
