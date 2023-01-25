@@ -9,9 +9,11 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 
-#[Route('/')]
+#[Route('/tools')]
 class ToolsController extends AbstractController
 {
 
@@ -21,7 +23,7 @@ class ToolsController extends AbstractController
     }
 
 
-    #[Route('/', name: 'tools_index')]
+    #[Route('/', name: 'app_tools_index')]
     public function index()
     {
         $response = $this->client->request(
@@ -58,17 +60,25 @@ class ToolsController extends AbstractController
             echo "File downloading failed.";
         }
 
-        return $this->redirectToRoute('app_home');
+        return $this->redirectToRoute('app_admin');
 
     }
 
-    #[Route('/find', name: 'tools_find')]
-    public function find()
+    #[Route('/catalogue', name: 'app_tools_catalogue')]
+    public function catalogue(): RedirectResponse
     {
-        $form = $this->createForm(FilmSearchFormType::class);
-        $films = [];
-//        dd($form);
-        return $this->render('video/recherche.html.twig', compact('form', 'films'));
+
+        $process = new Process(['python3', '/Users/gilles/Documents/INFORMATIQUE/CODES_SOURCES/Python/Outils/_catalogue_maxtor.py']);
+        $process->run();
+        // executes after the command finishes
+        if (!$process->isSuccessful()) {
+            $this->addFlash('danger', 'Il y a eu un problème');
+            throw new ProcessFailedException($process);
+        } else {
+            $this->addFlash('success', 'Catalogue téléchargé');
+        }
+
+        return $this->redirectToRoute('app_admin');
     }
 
 
@@ -128,6 +138,25 @@ class ToolsController extends AbstractController
         }
     }
 
+    #[Route('/maj', name: 'tools_maj')]
+    public function maj(FilmRepository $repository): RedirectResponse
+    {
+        $films = $repository->findAll();
+        $i = 0;
+        foreach ($films as $film) {
+            $i++;
+            $code = $this->getCode($film->getTitre());
+            if ($code <> 0) {
+                dump($this->getInfo($code));
+            }
+            if ($i == 10) {
+                break;
+            }
+        }
+        $this->addFlash('success', 'mise à jour effectuée');
+        return $this->redirectToRoute('film_index');
+    }
+
     // takes URL of image and Path for the image as parameter
     public function download_image($url, $path)
     {
@@ -147,24 +176,5 @@ class ToolsController extends AbstractController
         if ($newf) {
             fclose($newf);
         }
-    }
-
-    #[Route('/maj', name: 'tools_maj')]
-    public function maj(FilmRepository $repository): RedirectResponse
-    {
-        $films = $repository->findAll();
-        $i = 0;
-        foreach ($films as $film) {
-            $i++;
-            $code = $this->getCode($film->getTitre());
-            if ($code <> 0) {
-                dump($this->getInfo($code));
-            }
-            if ($i == 10) {
-                break;
-            }
-        }
-        $this->addFlash('success', 'mise à jour effectuée');
-        return $this->redirectToRoute('film_index');
     }
 }
