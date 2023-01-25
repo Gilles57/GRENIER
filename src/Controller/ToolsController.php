@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Encoder\JsonDecode;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -23,75 +24,44 @@ class ToolsController extends AbstractController
     }
 
 
-    #[Route('/', name: 'app_tools_index')]
-    public function index()
+    #[Route('/test/{titre}', name: 'app_tools_test')]
+    public function test(?string $titre): RedirectResponse
     {
         $response = $this->client->request(
             'GET',
-            'https://api.themoviedb.org/3/search/movie?api_key=c7924bfc3e4208e9e6eafb5beaee9940&query=La Bataille du Rail&language=fr'
+            'https://api.themoviedb.org/3/search/movie?api_key=c7924bfc3e4208e9e6eafb5beaee9940&query=' . $titre . '&language=fr'
         );
-
-
+        $temp = json_decode($response->getContent(), true);
+        $result = $temp['results'][0];
+        $id = $result['id'];
 
         $response = $this->client->request(
             'GET',
-            'https://api.themoviedb.org/3/movie/39142?api_key=c7924bfc3e4208e9e6eafb5beaee9940&language=fr'
+            'https://api.themoviedb.org/3/movie/' . $id . '?api_key=c7924bfc3e4208e9e6eafb5beaee9940&language=fr'
         );
 
+        $film = json_decode($response->getContent(), true);
+        $affiche = $film['poster_path'];
 
         $response = $this->client->request(
             'GET',
-            'https://image.tmdb.org/t/p/w500/iZXFn7xz5qh7AaMHCAKuwaySuYv.jpg'
+            'https://image.tmdb.org/t/p/w500/' . $affiche
         );
 
         // Initialize a file URL to the variable
         $url =
-            'https://image.tmdb.org/t/p/w500/iZXFn7xz5qh7AaMHCAKuwaySuYv.jpg';
+            'https://image.tmdb.org/t/p/w500/' . $affiche;
 
         // Use basename() function to return the base name of file
         $file_name = basename($url);
 
-        if (file_put_contents('uploads/affiches/'.$file_name, file_get_contents($url)))
-        {
+        if (file_put_contents('uploads/affiches/' . $file_name, file_get_contents($url))) {
             echo "File downloaded successfully";
-        }
-        else
-        {
+        } else {
             echo "File downloading failed.";
         }
 
         return $this->redirectToRoute('app_admin');
-
-    }
-
-    #[Route('/catalogue', name: 'app_tools_catalogue')]
-    public function catalogue(): RedirectResponse
-    {
-
-        $process = new Process(['python3', '/Users/gilles/Documents/INFORMATIQUE/CODES_SOURCES/Python/Outils/_catalogue_maxtor.py']);
-        $process->run();
-        // executes after the command finishes
-        if (!$process->isSuccessful()) {
-            $this->addFlash('danger', 'Il y a eu un problème');
-            throw new ProcessFailedException($process);
-        } else {
-            $this->addFlash('success', 'Catalogue téléchargé');
-        }
-
-        return $this->redirectToRoute('app_admin');
-    }
-
-
-    public function getCode($titre)
-    {
-
-
-    }
-
-    public function getInfo($code)
-    {
-
-        return "";
     }
 
     #[Route('/recup/{id}', name: 'tools_recup')]
@@ -155,6 +125,21 @@ class ToolsController extends AbstractController
         }
         $this->addFlash('success', 'mise à jour effectuée');
         return $this->redirectToRoute('film_index');
+    }
+
+    #[Route('/catalogue', name: 'app_tools_catalogue')]
+    public function catalogue(): RedirectResponse
+    {
+        $process = new Process(['python3', '/Users/gilles/Documents/INFORMATIQUE/CODES_SOURCES/Python/Outils/_catalogue_maxtor.py']);
+        $process->run();
+        // executes after the command finishes
+        if (!$process->isSuccessful()) {
+            $this->addFlash('danger', 'Il y a eu un problème');
+            throw new ProcessFailedException($process);
+        } else {
+            $this->addFlash('success', 'Catalogue téléchargé');
+        }
+        return $this->redirectToRoute('app_admin');
     }
 
     // takes URL of image and Path for the image as parameter
