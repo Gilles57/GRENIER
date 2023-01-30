@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Import{% endblock %}
+
+{% block body %}
+    <h1>Import</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ import.id }}</td>
+            </tr>
+            <tr>
+                <th>Fichier</th>
+                <td>{{ import.fichier }}</td>
+            </tr>
+            <tr>
+                <th>Title</th>
+                <td>{{ import.title }}</td>
+            </tr>
+            <tr>
+                <th>Extension</th>
+                <td>{{ import.extension }}</td>
+            </tr>
+            <tr>
+                <th>Langue</th>
+                <td>{{ import.langue }}</td>
+            </tr>
+            <tr>
+                <th>Annee</th>
+                <td>{{ import.annee }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_import_index') }}">back to list</a>
+
+    <a href="{{ path('app_import_edit', {'id': import.id}) }}">edit</a>
+
+    {{ include('import/_delete_form.html.twig') }}
+{% endblock %}

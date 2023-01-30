@@ -1,100 +1,36 @@
-{#<link rel="stylesheet"#}
-{#      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-formhelpers/2.3.0/img/bootstrap-formhelpers-countries.flags.png">#}
+<div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light ">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-<img class="bandeau" alt="" src="{{ asset('/images/bandeau.gif') }}" width="950" height="180"/>
-
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">Navbar</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Dropdown
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#">Action</a>
-                    <a class="dropdown-item" href="#">Another action</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Something else here</a>
-                </div>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-            </li>
-        </ul>
-        <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
-    </div>
-</nav>
-
-{#{% block nav %}#}
-{#    {% if app.request.attributes.get('_route_params') is not empty and app.request.attributes.get('_route_params')['rubrique'] is defined %}#}
-{#        {% set current_route =  app.request.attributes.get('_route')~"/"~app.request.attributes.get('_route_params')['rubrique'] %}#}
-{#    {% else %}#}
-{#        {% set current_route =  app.request.attributes.get('_route') %}#}
-{#    {% endif %}#}
-{#    #}{# {{ dump(current_route) }} #}
-{#    <nav class="navbar navbar-expand-sm  nav-fill  flex-column flex-sm-row mb-3 small" >#}
-{#        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"#}
-{#                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">#}
-{#            <span class="navbar-toggler-icon"></span>#}
-{#        </button>#}
-{#        <div class="collapse navbar-collapse nav-tabs" id="navbarNav">#}
-{#            <ul class="nav  navbar-expand-sm  nav-fill  flex-column flex-lg-row mt-3  flex-grow-1 flex-wrap" >#}
-{#                <li class="nav-item">#}
-{#                    <a class="flex-sm-fill text-sm-center nav-link border-secondary bg-light#}
-{#                             {% if current_route == 'rgpd' %}#}
-{#                             disabled " style="color: grey !important;"#}
-{#                             {% endif %}" href="{{ path('rgpd') }}">RGPD</a>#}
-{#                </li>#}
-
-{#                <li class="nav-item dropdown">#}
-{#                    <a class="nav-link dropdown-toggle border-secondary bg-light#}
-{#                        " data-bs-toggle="dropdown" href="#" role="button" id="dropdownMenuLink"#}
-{#                       aria-expanded="false">Dropdown menu</a>#}
-{#                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">#}
-{#                        <li>#}
-{#                            <a class="dropdown-item#}
-{#                           {% if app.request.attributes.get('_route') == 'app_bienetre' %}disabled{% endif %}"#}
-{#                               href="#">X</a></li>#}
-{#                        <li><a class="dropdown-item#}
-{#                     {% if app.request.attributes.get('_route') == 'app_relaxation' %}disabled{% endif %}"#}
-{#                               href="#">Y</a>#}
-{#                        </li>#}
-{#                        <li><a class="dropdown-item#}
-{#                     {% if app.request.attributes.get('_route') == 'app_massage' %}disabled{% endif %} disabled"#}
-{#                               href="#">Z</a></li>#}
-{#                    </ul>#}
-{#                </li>#}
-
-
-
-{#<ul class="nav navbar-nav navbar-right">#}
-{#    {% if is_granted('IS_AUTHENTICATED_FULLY') %}#}
-{#        <li><a href="{{ path('app_logout') }}"><span#}
-{#                        class="glyphicon glyphicon-log-out"></span> Se déconnecter</a>#}
-{#        </li>#}
-{#    {% else %}#}
-{#        <li><a href="{{ path('app_login') }}"><span#}
-{#                        class="glyphicon glyphicon-log-in"></span>Se connecter</a></li>#}
-{#    {% endif %}#}
-{#</ul>#}
-
-{#     Menu développement #}
-{#<li class="rouge">{{ app.request.attributes.get('_route') }}</li>#}
-{#</div><!-- /.navbar-collapse -->#}
-{#        </div>#}
-</nav>
-{#    {% endblock %}#}
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ path('app_home') }}">Home</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Secteurs
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{{ path('app_recettes') }}">Recettes</a>
+                        <a class="dropdown-item" href="{{ path('app_info') }}">Informatique</a>
+                        <a class="dropdown-item" href="{{ path('app_videos') }}">Vidéos</a>
+                        <a class="dropdown-item" href="{{ path('app_divers') }}">Divers</a>
+                    </div>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ path('app_test') }}">Tests</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav d-flex">
+                <li class="nav-item">
+                    <a class="nav-link btn btn-danger" href="{{ path('app_admin') }}">Admin</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>

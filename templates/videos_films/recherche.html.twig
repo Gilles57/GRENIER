@@ -45,15 +45,15 @@
 {#        <table class="table table-striped table-hover table-sm">#}
 {#            <thead class="thead">#}
 {#            <tr>#}
-{#                <th scope="col">{{ knp_pagination_sortable(films, 'Titre français', 'f.titreFR') }}</th>#}
-{#                <th scope="col">{{ knp_pagination_sortable(films, 'Titre original', 'f.titreVO') }}</th>#}
-{#                <th scope="col">{{ knp_pagination_sortable(films, 'Année de sortie', 'f.annee') }}</th>#}
-{#                <th scope="col">{{ knp_pagination_sortable(films, 'Vu', 'f.vu') }}</th>#}
+{#                <th scope="col">{{ knp_pagination_sortable(videos_films, 'Titre français', 'f.titreFR') }}</th>#}
+{#                <th scope="col">{{ knp_pagination_sortable(videos_films, 'Titre original', 'f.titreVO') }}</th>#}
+{#                <th scope="col">{{ knp_pagination_sortable(videos_films, 'Année de sortie', 'f.annee') }}</th>#}
+{#                <th scope="col">{{ knp_pagination_sortable(videos_films, 'Vu', 'f.vu') }}</th>#}
 {#                <th scope="col">Actions</th>#}
 {#            </tr>#}
 {#            </thead>#}
 {#            <tbody>#}
-{#            {% for film in films %}#}
+{#            {% for film in videos_films %}#}
 {#                <tr>#}
 {#                    <td>{{ film.titreFR }}</td>#}
 {#                    <td>{{ film.titreVO }}</td>#}
@@ -100,7 +100,7 @@
 {#        </table>#}
 
 {#        <div class=" navigation">#}
-{#            {{ knp_pagination_render(films) }}#}
+{#            {{ knp_pagination_render(videos_films) }}#}
 {#        </div>#}
         <ul>
         </ul>

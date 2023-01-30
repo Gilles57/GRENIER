@@ -57,12 +57,12 @@ class RecetteUnitTest extends TestCase
 //    public function testNewRecette(): void
 //    {
 //
-//        $recette = new Recette();
+//        $secteur_recette = new Recette();
 //
 //
-//        $recette->setTitre('Recette de test');
+//        $secteur_recette->setTitre('Recette de test');
 //
-//                $this->recetteRepository->add($recette, true);
+//                $this->recetteRepository->add($secteur_recette, true);
 //
 //                $verif = $this->recetteRepository->findByTitre('Recette de test');
 //

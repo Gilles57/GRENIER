@@ -40,7 +40,7 @@ class RecettesFixtures extends Fixture
             $recette->setCreatedAt(new \DateTimeImmutable());
             $recette->setTitre($faker->text(50));
             $recette->setdureePreparation($faker->numberBetween(10, 200));
-            $recette->setIllustration('recette-test-'.($j + 1).'.jpg');
+            $recette->setIllustration('secteur_recette-test-'.($j + 1).'.jpg');
 
             $randomCat = rand(0, count($cats) - 1);
             $recette->setCategorie($cats[$randomCat]);

@@ -28,7 +28,7 @@ class Recette
     #[ORM\Column(type: 'string', length: 20)]
     private ?string $dureePreparation;
 
-    #[ORM\OneToMany(mappedBy: 'recette', targetEntity: Ingredient::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'secteur_recette', targetEntity: Ingredient::class, orphanRemoval: true)]
     private  $Ingredients;
 
     #[ORM\ManyToOne(targetEntity: CatRecette::class, inversedBy: 'recettes')]

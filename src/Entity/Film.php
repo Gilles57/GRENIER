@@ -6,6 +6,7 @@ use App\Entity\Traits\Timestampable;
 use App\Repository\FilmRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FilmRepository::class)]
@@ -40,12 +41,36 @@ class Film
     #[ORM\Column(type: 'boolean')]
     private ?bool $coupDeCoeur;
 
-    #[ORM\ManyToMany(targetEntity: CatFilm::class, inversedBy: 'films')]
+    #[ORM\ManyToMany(targetEntity: CatFilm::class, inversedBy: 'videos_films')]
     private  $category;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $code_tmbd = null;
+
+    #[ORM\ManyToMany(targetEntity: Genre::class, inversedBy: 'videos_films')]
+    private Collection $genres;
+
+    #[ORM\ManyToMany(targetEntity: Version::class, inversedBy: 'videos_films')]
+    private Collection $version;
+
+    #[ORM\ManyToMany(targetEntity: Langue::class, inversedBy: 'videos_films')]
+    private Collection $langues;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
+
+    #[ORM\Column(length: 5, nullable: true)]
+    private ?string $extension = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $release_date = null;
 
     public function __construct()
     {
         $this->category = new ArrayCollection();
+        $this->genres = new ArrayCollection();
+        $this->version = new ArrayCollection();
+        $this->langues = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -157,6 +182,126 @@ class Film
     public function removeCategory(CatFilm $category): self
     {
         $this->category->removeElement($category);
+
+        return $this;
+    }
+
+    public function getCodeTmbd(): ?int
+    {
+        return $this->code_tmbd;
+    }
+
+    public function setCodeTmbd(?int $code_tmbd): self
+    {
+        $this->code_tmbd = $code_tmbd;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Genre>
+     */
+    public function getGenres(): Collection
+    {
+        return $this->genres;
+    }
+
+    public function addGenre(Genre $genre): self
+    {
+        if (!$this->genres->contains($genre)) {
+            $this->genres->add($genre);
+        }
+
+        return $this;
+    }
+
+    public function removeGenre(Genre $genre): self
+    {
+        $this->genres->removeElement($genre);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Version>
+     */
+    public function getVersion(): Collection
+    {
+        return $this->version;
+    }
+
+    public function addVersion(Version $version): self
+    {
+        if (!$this->version->contains($version)) {
+            $this->version->add($version);
+        }
+
+        return $this;
+    }
+
+    public function removeVersion(Version $version): self
+    {
+        $this->version->removeElement($version);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Langue>
+     */
+    public function getLangues(): Collection
+    {
+        return $this->langues;
+    }
+
+    public function addLangue(Langue $langue): self
+    {
+        if (!$this->langues->contains($langue)) {
+            $this->langues->add($langue);
+        }
+
+        return $this;
+    }
+
+    public function removeLangue(Langue $langue): self
+    {
+        $this->langues->removeElement($langue);
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getExtension(): ?string
+    {
+        return $this->extension;
+    }
+
+    public function setExtension(?string $extension): self
+    {
+        $this->extension = $extension;
+
+        return $this;
+    }
+
+    public function getReleaseDate(): ?\DateTimeImmutable
+    {
+        return $this->release_date;
+    }
+
+    public function setReleaseDate(?\DateTimeImmutable $release_date): self
+    {
+        $this->release_date = $release_date;
 
         return $this;
     }

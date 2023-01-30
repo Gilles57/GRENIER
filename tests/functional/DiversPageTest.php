@@ -12,7 +12,7 @@ class DiversPageTest extends WebTestCase
     public function testVideosPageWorks(): void
     {
         $client = static::createClient();
-        $crawler =  $client->request('GET', '/divers');
+        $crawler =  $client->request('GET', '/secteur_divers');
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);

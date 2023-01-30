@@ -2,13 +2,22 @@
 
 namespace App\Controller;
 
+use App\Entity\Film;
+use App\Entity\Import;
 use App\Form\FilmSearchFormType;
 use App\Repository\FilmRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use JetBrains\PhpStorm\NoReturn;
+use League\Csv\Reader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\Encoder\JsonDecode;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -18,51 +27,10 @@ use Symfony\Component\Process\Process;
 class ToolsController extends AbstractController
 {
 
-    public function __construct(HttpClientInterface $client)
+    public function __construct(private HttpClientInterface $client,)
     {
-        $this->client = $client;
     }
 
-
-    #[Route('/test/{titre}', name: 'app_tools_test')]
-    public function test(?string $titre): RedirectResponse
-    {
-        $response = $this->client->request(
-            'GET',
-            'https://api.themoviedb.org/3/search/movie?api_key=c7924bfc3e4208e9e6eafb5beaee9940&query=' . $titre . '&language=fr'
-        );
-        $temp = json_decode($response->getContent(), true);
-        $result = $temp['results'][0];
-        $id = $result['id'];
-
-        $response = $this->client->request(
-            'GET',
-            'https://api.themoviedb.org/3/movie/' . $id . '?api_key=c7924bfc3e4208e9e6eafb5beaee9940&language=fr'
-        );
-
-        $film = json_decode($response->getContent(), true);
-        $affiche = $film['poster_path'];
-
-        $response = $this->client->request(
-            'GET',
-            'https://image.tmdb.org/t/p/w500/' . $affiche
-        );
-
-        // Initialize a file URL to the variable
-        $url =
-            'https://image.tmdb.org/t/p/w500/' . $affiche;
-
-        // Use basename() function to return the base name of file
-        $file_name = basename($url);
-
-        if (file_put_contents('uploads/affiches/' . $file_name, file_get_contents($url))) {
-            echo "File downloaded successfully";
-        } else {
-            echo "File downloading failed.";
-        }
-
-        return $this->redirectToRoute('app_admin');
-    }
 
     #[Route('/recup/{id}', name: 'tools_recup')]
     public function recuperation(FilmRepository $repository, int $id = 1): RedirectResponse|Response
@@ -101,7 +69,7 @@ class ToolsController extends AbstractController
                 $data['genres'] = $genres;
             }
 
-            return $this->render('films/api.html.twig', compact('data'));
+            return $this->render('videos_films/api.html.twig', compact('data'));
         } else {
             $this->addFlash('error', 'Film non trouvé');
             return $this->redirectToRoute('film_index');
@@ -137,6 +105,8 @@ class ToolsController extends AbstractController
             $this->addFlash('danger', 'Il y a eu un problème');
             throw new ProcessFailedException($process);
         } else {
+//            $records = $this->importCsv();
+
             $this->addFlash('success', 'Catalogue téléchargé');
         }
         return $this->redirectToRoute('app_admin');
@@ -161,5 +131,83 @@ class ToolsController extends AbstractController
         if ($newf) {
             fclose($newf);
         }
+    }
+
+    #[NoReturn] #[Route('/load_film/{titre}', name: 'app_load_film')]
+    public function load(Import $import, EntityManagerInterface $em): RedirectResponse
+    {
+        $titre = $import->getFichier();
+        $response = $this->client->request(
+            'GET',
+            'https://api.themoviedb.org/3/search/movie?api_key=c7924bfc3e4208e9e6eafb5beaee9940&query=' . $titre . '&language=fr'
+        );
+        $temp = json_decode($response->getContent(), true);
+        $result = $temp['results'][0];
+        $id = $result['id'];
+
+        $response = $this->client->request(
+            'GET',
+            'https://api.themoviedb.org/3/movie/' . $id . '?api_key=c7924bfc3e4208e9e6eafb5beaee9940&language=fr'
+        );
+
+        $filmfinded = json_decode($response->getContent(), true);
+        $affiche = $filmfinded['poster_path'];
+
+
+        // Initialize a file URL to the variable
+        $url = 'https://image.tmdb.org/t/p/w500/' . $affiche;
+
+        // Use basename() function to return the base name of file
+        $file_name = basename($url);
+
+        if (file_put_contents('uploads/affiches/' . $file_name, file_get_contents($url))) {
+            $film = new Film();
+            $film->setTitre($filmfinded['title']);
+            $film->setTitreOriginal($filmfinded['original_title']);
+            $film->setReleaseDate($filmfinded['release_date']);
+            $film->setAnneeSortie($import->getAnnee());
+            $film->setExtension($import->getExtension());
+            $film->setCodeTmbd($filmfinded['imbd_id']);
+            $film->setCoupDeCoeur('false');
+            $film->setAGarder('false');
+            $film->setVu('false');
+            $film->setMedia($filmfinded['poster_path']);
+//            $film->addVersion($import->getLangue());
+//            $film->addCategory($filmfinded['title']);
+            foreach ($filmfinded['genres'] as $genre) {
+                $film->addGenre($genre['name']);
+            }
+            foreach ($filmfinded['genres'] as $genre) {
+                $film->addLangue($genre['original_language']);
+            }
+            $em->persist($film);
+        } else {
+            echo "File downloading failed.";
+        }
+        $em->flush();
+        return $this->redirectToRoute('app_admin');
+    }
+
+    #[Route('/import', name: 'tools_import')]
+    public function importCsv(KernelInterface $kernel, EntityManagerInterface $em): Response
+    {
+        $reader = Reader::createFromPath('datas/Films.csv', 'r');
+        $reader->setDelimiter('|');
+
+        $records = $reader->getIterator();
+        foreach ($records as $record) {
+            dump($record);
+            $import = (new Import())
+                ->setFichier($record[0])
+                ->setTitle(trim($record[1], '"'))
+                ->setExtension(trim($record[2], '"'))
+                ->setLangue(trim($record[3], '"'))
+                ->setAnnee(trim($record[4], '"'));
+            $em->persist($import);
+        }
+        $em->flush();
+        $this->addFlash('success', 'Les données o,t été importées avec succès.');
+
+        return $this->redirectToRoute('app_admin');
     }
 }

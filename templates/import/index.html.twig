@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Import index{% endblock %}
+
+{% block body %}
+    <h1>Import index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Fichier</th>
+                <th>Title</th>
+                <th>Extension</th>
+                <th>Langue</th>
+                <th>Annee</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for import in imports %}
+            <tr>
+                <td>{{ import.id }}</td>
+                <td>{{ import.fichier }}</td>
+                <td>{{ import.title }}</td>
+                <td>{{ import.extension }}</td>
+                <td>{{ import.langue }}</td>
+                <td>{{ import.annee }}</td>
+                <td>
+                    <a href="{{ path('app_import_show', {'id': import.id}) }}">show</a>
+                    <a href="{{ path('app_import_edit', {'id': import.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_import_new') }}">Create new</a>
+{% endblock %}

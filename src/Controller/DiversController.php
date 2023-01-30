@@ -8,10 +8,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class DiversController extends AbstractController
 {
-    #[Route('/divers', name: 'app_divers')]
+    #[Route('/secteur_divers', name: 'app_divers')]
     public function index(): Response
     {
-        return $this->render('divers/index.html.twig', [
+        return $this->render('secteur_divers/index.html.twig', [
             'controller_name' => 'DiversController',
         ]);
     }

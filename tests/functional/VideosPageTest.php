@@ -12,7 +12,7 @@ class VideosPageTest extends WebTestCase
     public function testVideosPageWorks(): void
     {
         $client = static::createClient();
-        $crawler =  $client->request('GET', '/videos');
+        $crawler =  $client->request('GET', '/secteur_videos');
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);

@@ -10,19 +10,19 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/series')]
+#[Route('/videos_series')]
 class SerieController extends AbstractController
 {
-    #[Route('/series', name: 'app_series')]
+    #[Route('/videos_series', name: 'app_series')]
     public function series(): Response
     {
-        return $this->render('series/series.html.twig');
+        return $this->render('videos_series/videos_series.html.twig');
     }
 
     #[Route('/serie/{id}', name: 'app_serie_show')]
     public function series_show(): Response
     {
-        return $this->render('series/serie_show.html.twig');
+        return $this->render('videos_series/serie_show.html.twig');
     }
 
     #[Route('/serie/new', name: 'app_serie_new')]
@@ -30,7 +30,7 @@ class SerieController extends AbstractController
     {
 //        $serie = $serieRepository->find($id);
         $serie=[];
-        return $this->render('series/serie_show.html.twig', compact('serie'));
+        return $this->render('videos_series/serie_show.html.twig', compact('serie'));
     }
 
     #[Route('/find', name: 'tools_find')]
@@ -39,7 +39,7 @@ class SerieController extends AbstractController
         $form = $this->createForm(SerieSearchFormType::class);
         $series = [];
 //        dd($form);
-        return $this->render('series/recherche.html.twig', compact('form', 'series'));
+        return $this->render('videos_series/recherche.html.twig', compact('form', 'series'));
     }
 
 }

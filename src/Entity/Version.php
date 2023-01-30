@@ -2,23 +2,23 @@
 
 namespace App\Entity;
 
-use App\Repository\CatFilmRepository;
+use App\Repository\VersionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: CatFilmRepository::class)]
-class Genre
+#[ORM\Entity(repositoryClass: VersionRepository::class)]
+class Version
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private ?int $id;
+    #[ORM\Column]
+    private ?int $id = null;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private $nom;
+    #[ORM\Column(length: 50)]
+    private ?string $name = null;
 
-    #[ORM\ManyToMany(targetEntity: Film::class, mappedBy: 'genres')]
+    #[ORM\ManyToMany(targetEntity: Film::class, mappedBy: 'version')]
     private Collection $films;
 
     public function __construct()
@@ -26,20 +26,19 @@ class Genre
         $this->films = new ArrayCollection();
     }
 
-
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getNom(): ?string
+    public function getName(): ?string
     {
-        return $this->nom;
+        return $this->name;
     }
 
-    public function setNom(string $nom): self
+    public function setName(string $name): self
     {
-        $this->nom = $nom;
+        $this->name = $name;
 
         return $this;
     }
@@ -56,7 +55,7 @@ class Genre
     {
         if (!$this->films->contains($film)) {
             $this->films->add($film);
-            $film->addGenre($this);
+            $film->addVersion($this);
         }
 
         return $this;
@@ -65,7 +64,7 @@ class Genre
     public function removeFilm(Film $film): self
     {
         if ($this->films->removeElement($film)) {
-            $film->removeGenre($this);
+            $film->removeVersion($this);
         }
 
         return $this;

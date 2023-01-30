@@ -36,7 +36,7 @@ class FilmsFixtures extends Fixture
             $manager->persist($cats[$i]);
         }
 
-        // Création de films
+        // Création de videos_films
         for ($j = 0; $j < 5; ++$j) {
             $film = new Film();
             $film->setUpdatedAt(new \DateTimeImmutable());
