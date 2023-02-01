@@ -3,20 +3,31 @@
 namespace App\Controller;
 
 use App\Entity\Users;
+use App\Repository\ImportRepository;
 use App\Repository\UsersRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class AdminController extends AbstractController
 {
     #[Route('/', name: 'app_admin')]
-    public function index(): Response
+    public function index(ImportRepository $repo): Response
     {
-        return $this->render('admin/index.html.twig', [
+        $nb_imports = $repo->count([]);
+        $fichier_exist = false;
 
-        ]);
+        $finder = new Finder();
+        $finder->files()->in('/Users/gilles/Sites/S6/GRENIER/public/data');
+
+        foreach ($finder as $file) {
+            if($file->getFilename()=='Films.csv'){
+                $fichier_exist = true;
+            };
+        }
+        return $this->render('admin/index.html.twig', compact('nb_imports', 'fichier_exist'));
     }
 
     #[Route('/data', name: 'app_data')]

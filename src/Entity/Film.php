@@ -45,7 +45,7 @@ class Film
     private  $category;
 
     #[ORM\Column(nullable: true)]
-    private ?int $code_tmbd = null;
+    private ?string $code_tmbd = null;
 
     #[ORM\ManyToMany(targetEntity: Genre::class, inversedBy: 'videos_films')]
     private Collection $genres;
@@ -186,12 +186,12 @@ class Film
         return $this;
     }
 
-    public function getCodeTmbd(): ?int
+    public function getCodeTmbd(): ?string
     {
         return $this->code_tmbd;
     }
 
-    public function setCodeTmbd(?int $code_tmbd): self
+    public function setCodeTmbd(?string $code_tmbd): self
     {
         $this->code_tmbd = $code_tmbd;
 

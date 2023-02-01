@@ -6,6 +6,7 @@ use App\Entity\Film;
 use App\Entity\Import;
 use App\Form\FilmSearchFormType;
 use App\Repository\FilmRepository;
+use App\Repository\ImportRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use JetBrains\PhpStorm\NoReturn;
 use League\Csv\Reader;
@@ -32,7 +33,30 @@ class ToolsController extends AbstractController
     }
 
 
-    #[Route('/recup/{id}', name: 'tools_recup')]
+
+    //---------------------- À VERIFIER ------------------------------//
+    // takes URL of image and Path for the image as parameter
+    public function download_image($url, $path)
+    {
+        $newfname = $path;
+        $file = fopen($url, 'rb');
+        if ($file) {
+            $newf = fopen($newfname, 'wb');
+            if ($newf) {
+                while (!feof($file)) {
+                    fwrite($newf, fread($file, 1024 * 8), 1024 * 8);
+                }
+            }
+        }
+        if ($file) {
+            fclose($file);
+        }
+        if ($newf) {
+            fclose($newf);
+        }
+    }
+
+    #[Route('/load_film/{id}', name: 'app_load_film')]
     public function recuperation(FilmRepository $repository, int $id = 1): RedirectResponse|Response
     {
         $film = $repository->find($id);
@@ -95,7 +119,10 @@ class ToolsController extends AbstractController
         return $this->redirectToRoute('film_index');
     }
 
-    #[Route('/catalogue', name: 'app_tools_catalogue')]
+    //------------------------ WORKFLOW CORRECT -----------------------//
+
+    // Création du catalogue depuis Python
+    #[Route('/catalogue', name: 'app_tools_create_catalogue')]
     public function catalogue(): RedirectResponse
     {
         $process = new Process(['python3', '/Users/gilles/Documents/INFORMATIQUE/CODES_SOURCES/Python/Outils/_catalogue_maxtor.py']);
@@ -105,98 +132,20 @@ class ToolsController extends AbstractController
             $this->addFlash('danger', 'Il y a eu un problème');
             throw new ProcessFailedException($process);
         } else {
-//            $records = $this->importCsv();
-
             $this->addFlash('success', 'Catalogue téléchargé');
-        }
-        return $this->redirectToRoute('app_admin');
-    }
-
-    // takes URL of image and Path for the image as parameter
-    public function download_image($url, $path)
-    {
-        $newfname = $path;
-        $file = fopen($url, 'rb');
-        if ($file) {
-            $newf = fopen($newfname, 'wb');
-            if ($newf) {
-                while (!feof($file)) {
-                    fwrite($newf, fread($file, 1024 * 8), 1024 * 8);
-                }
-            }
-        }
-        if ($file) {
-            fclose($file);
-        }
-        if ($newf) {
-            fclose($newf);
+            return $this->redirectToRoute('app_admin');
         }
     }
 
-    #[NoReturn] #[Route('/load_film/{titre}', name: 'app_load_film')]
-    public function load(Import $import, EntityManagerInterface $em): RedirectResponse
-    {
-        $titre = $import->getFichier();
-        $response = $this->client->request(
-            'GET',
-            'https://api.themoviedb.org/3/search/movie?api_key=c7924bfc3e4208e9e6eafb5beaee9940&query=' . $titre . '&language=fr'
-        );
-        $temp = json_decode($response->getContent(), true);
-        $result = $temp['results'][0];
-        $id = $result['id'];
-
-        $response = $this->client->request(
-            'GET',
-            'https://api.themoviedb.org/3/movie/' . $id . '?api_key=c7924bfc3e4208e9e6eafb5beaee9940&language=fr'
-        );
-
-        $filmfinded = json_decode($response->getContent(), true);
-        $affiche = $filmfinded['poster_path'];
-
-
-        // Initialize a file URL to the variable
-        $url = 'https://image.tmdb.org/t/p/w500/' . $affiche;
-
-        // Use basename() function to return the base name of file
-        $file_name = basename($url);
-
-        if (file_put_contents('uploads/affiches/' . $file_name, file_get_contents($url))) {
-            $film = new Film();
-            $film->setTitre($filmfinded['title']);
-            $film->setTitreOriginal($filmfinded['original_title']);
-            $film->setReleaseDate($filmfinded['release_date']);
-            $film->setAnneeSortie($import->getAnnee());
-            $film->setExtension($import->getExtension());
-            $film->setCodeTmbd($filmfinded['imbd_id']);
-            $film->setCoupDeCoeur('false');
-            $film->setAGarder('false');
-            $film->setVu('false');
-            $film->setMedia($filmfinded['poster_path']);
-//            $film->addVersion($import->getLangue());
-//            $film->addCategory($filmfinded['title']);
-            foreach ($filmfinded['genres'] as $genre) {
-                $film->addGenre($genre['name']);
-            }
-            foreach ($filmfinded['genres'] as $genre) {
-                $film->addLangue($genre['original_language']);
-            }
-            $em->persist($film);
-        } else {
-            echo "File downloading failed.";
-        }
-        $em->flush();
-        return $this->redirectToRoute('app_admin');
-    }
-
-    #[Route('/import', name: 'tools_import')]
-    public function importCsv(KernelInterface $kernel, EntityManagerInterface $em): Response
+    // Chargement du catalogue csv dans Imports
+    #[Route('/import', name: 'app_tools_import_csv')]
+    public function importCsv(EntityManagerInterface $em): RedirectResponse
     {
         $reader = Reader::createFromPath('datas/Films.csv', 'r');
         $reader->setDelimiter('|');
 
         $records = $reader->getIterator();
         foreach ($records as $record) {
-            dump($record);
             $import = (new Import())
                 ->setFichier($record[0])
                 ->setTitle(trim($record[1], '"'))
@@ -206,7 +155,68 @@ class ToolsController extends AbstractController
             $em->persist($import);
         }
         $em->flush();
-        $this->addFlash('success', 'Les données o,t été importées avec succès.');
+        $this->addFlash('success', 'Les données ont été importées avec succès.');
+
+        return $this->redirectToRoute('app_admin');
+    }
+
+     // Transfert des Imports dans Films
+    #[Route('/load_films', name: 'app_tools_load_films')]
+    public function load(EntityManagerInterface $em, ImportRepository $importRepository, FilmRepository $filmRepository): RedirectResponse
+    {
+        $newsTitres = $importRepository->findAll();
+
+        foreach ($newsTitres as $newsTitre) {
+            $titre = $newsTitre->getFichier();
+            $response = $this->client->request(
+                'GET',
+                'https://api.themoviedb.org/3/search/movie?api_key=c7924bfc3e4208e9e6eafb5beaee9940&query=' . $titre . '&language=fr'
+            );
+            $temp = json_decode($response->getContent(), true);
+            dump($temp);
+            $result = $temp['results'][0];
+            $id = $result['id'];
+
+            $response = $this->client->request(
+                'GET',
+                'https://api.themoviedb.org/3/movie/' . $id . '?api_key=c7924bfc3e4208e9e6eafb5beaee9940&language=fr'
+            );
+
+            $filmFinded = json_decode($response->getContent(), true);
+            $affiche = $filmFinded['poster_path'];
+
+            // Initialize a file URL to the variable
+            $url = 'https://image.tmdb.org/t/p/w500/' . $affiche;
+
+            // Use basename() function to return the base name of file
+            $file_name = basename($url);
+//dd($filmFinded);
+            if (file_put_contents('uploads/affiches/' . $file_name, file_get_contents($url))) {
+                $film = new Film();
+                $film->setTitre($filmFinded['title']);
+                $film->setTitreOriginal($filmFinded['original_title']);
+                $film->setReleaseDate(new \DateTimeImmutable($filmFinded['release_date']));
+                $film->setAnneeSortie(intval($newsTitre->getAnnee()));
+                $film->setExtension($newsTitre->getExtension());
+                $film->setCodeTmbd($filmFinded['imdb_id'] ?? "");
+                $film->setCoupDeCoeur('false');
+                $film->setAGarder('false');
+                $film->setVu('false');
+                $film->setMedia($filmFinded['poster_path']);
+//            $film->addVersion($import->getLangue());
+//            $film->addCategory($filmFinded['title']);
+//                foreach ($filmFinded['genres'] as $genre) {
+//                    $film->addGenre($genre['name']);
+//                }
+//                foreach ($filmFinded['genres'] as $genre) {
+//                    $film->addLangue($genre['original_language']);
+//                }
+                $em->persist($film);
+                $em->remove($newsTitre);
+            }
+        }
+        $em->flush();
+        $this->addFlash('success', 'Transfert effectué');
 
         return $this->redirectToRoute('app_admin');
     }
