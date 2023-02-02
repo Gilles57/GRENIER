@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Users;
+use App\Entity\User;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Faker\Factory;
@@ -19,7 +19,7 @@ class AppFixtures extends Fixture
         $faker = Factory::create('fr_FR');
 
 //        dd($faker->slug());
-        $contact = new Users();
+        $contact = new User();
         $contact->setEmail('g.salmon@free.fr');
         $contact->setForename('Gilles');
         $contact->setName('SALMON');

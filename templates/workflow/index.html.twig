@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends '/base.html.twig' %}
 
 {% block title %}Hello AdminController!{% endblock %}
 
@@ -31,7 +31,7 @@
                     <li class="list-group-item"><a href="#">Ajouter un film</a></li>
                     <li class="list-group-item"><a href="{{ path('app_home') }}">Retour à l'accueil</a></li>
                     <li class="list-group-item"><a href="{{ path('app_tools_import_csv') }}">Import du csv</a></li>
-                    <li class="list-group-item"><a href="{{ path('app_load_film', {titre: 'avatar'}) }}">TESTS</a></li>
+{#                    <li class="list-group-item"><a href="{{ path('app_load_film', {titre: 'avatar'}) }}">TESTS</a></li>#}
                 </ul>
             </div>
         </div>

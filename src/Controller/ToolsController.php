@@ -32,7 +32,35 @@ class ToolsController extends AbstractController
     {
     }
 
+    //---------------------- FONCTIONS UTILITAIRES ------------------------------//
 
+    public function findOneFilm(
+        string $titre,
+        string $annee,
+    ): array
+    {
+        $response = $this->client->request(
+            'GET',
+            'https://api.themoviedb.org/3/search/movie?api_key=c7924bfc3e4208e9e6eafb5beaee9940&query=' . $titre . '&language=fr'
+        );
+        $temp = json_decode($response->getContent(), true);
+        $result = $temp['results'][0];
+
+        if ($annee == substr($result['release_date'], 0, 4)) {
+            $id = $result['id'];
+
+            // À partir de l'id, on va chercher la fiche détaillée
+            $response = $this->client->request(
+                'GET',
+                'https://api.themoviedb.org/3/movie/' . $id . '?api_key=c7924bfc3e4208e9e6eafb5beaee9940&language=fr'
+            );
+            $film = json_decode($response->getContent(), true);
+
+            return $film;
+        } else {
+            return [];
+        }
+    }
 
     //---------------------- À VERIFIER ------------------------------//
     // takes URL of image and Path for the image as parameter
@@ -56,68 +84,7 @@ class ToolsController extends AbstractController
         }
     }
 
-    #[Route('/load_film/{id}', name: 'app_load_film')]
-    public function recuperation(FilmRepository $repository, int $id = 1): RedirectResponse|Response
-    {
-        $film = $repository->find($id);
 
-        $code = $this->getCode($film->getTitre());
-
-        if ($code <> 0) {
-            $infos = $this->getInfo($code);
-
-//        dd($infos);
-            $data['code'] = $code;
-            $data['originalTitle'] = $infos['originalTitle'];
-            $data['productionYear'] = $infos['productionYear'];
-            $data['title'] = $infos['title'];
-            $data['synopsis'] = $infos['synopsis'];
-            $data['directors'] = $infos['castingShort']['directors'];
-            $data['actors'] = $infos['castingShort']['actors'];
-            $data['poster'] = $infos['poster']['href'];
-
-            $this->download_image($data['poster'], 'images/jaquettes/' . $code . '.jpg');
-            if (isset($infos['nationality'])) {
-                $nb = sizeof($infos['nationality']);
-                for ($i = 0; $i < $nb; $i++) {
-                    $nationality[$i] = $infos['nationality'][$i]['$'];
-                }
-                $data['nationalites'] = $nationality;
-            }
-
-            if (isset($infos['genre'])) {
-                $nb = sizeof($infos['genre']);
-                for ($i = 0; $i < $nb; $i++) {
-                    $genres[$i] = $infos['genre'][$i]['$'];
-                }
-                $data['genres'] = $genres;
-            }
-
-            return $this->render('videos_films/api.html.twig', compact('data'));
-        } else {
-            $this->addFlash('error', 'Film non trouvé');
-            return $this->redirectToRoute('film_index');
-        }
-    }
-
-    #[Route('/maj', name: 'tools_maj')]
-    public function maj(FilmRepository $repository): RedirectResponse
-    {
-        $films = $repository->findAll();
-        $i = 0;
-        foreach ($films as $film) {
-            $i++;
-            $code = $this->getCode($film->getTitre());
-            if ($code <> 0) {
-                dump($this->getInfo($code));
-            }
-            if ($i == 10) {
-                break;
-            }
-        }
-        $this->addFlash('success', 'mise à jour effectuée');
-        return $this->redirectToRoute('film_index');
-    }
 
     //------------------------ WORKFLOW CORRECT -----------------------//
 
@@ -160,64 +127,57 @@ class ToolsController extends AbstractController
         return $this->redirectToRoute('app_admin');
     }
 
-     // Transfert des Imports dans Films
+    // Transfert des Imports dans Films
     #[Route('/load_films', name: 'app_tools_load_films')]
-    public function load(EntityManagerInterface $em, ImportRepository $importRepository, FilmRepository $filmRepository): RedirectResponse
+    public function load(ImportRepository $importRepository, FilmRepository $filmRepository)
     {
-        $newsTitres = $importRepository->findAll();
+        $imports = $importRepository->findAll();
 
-        foreach ($newsTitres as $newsTitre) {
-            $titre = $newsTitre->getFichier();
-            $response = $this->client->request(
-                'GET',
-                'https://api.themoviedb.org/3/search/movie?api_key=c7924bfc3e4208e9e6eafb5beaee9940&query=' . $titre . '&language=fr'
-            );
-            $temp = json_decode($response->getContent(), true);
-            dump($temp);
-            $result = $temp['results'][0];
-            $id = $result['id'];
+        foreach ($imports as $import) {
 
-            $response = $this->client->request(
-                'GET',
-                'https://api.themoviedb.org/3/movie/' . $id . '?api_key=c7924bfc3e4208e9e6eafb5beaee9940&language=fr'
-            );
-
-            $filmFinded = json_decode($response->getContent(), true);
-            $affiche = $filmFinded['poster_path'];
-
-            // Initialize a file URL to the variable
-            $url = 'https://image.tmdb.org/t/p/w500/' . $affiche;
-
-            // Use basename() function to return the base name of file
-            $file_name = basename($url);
-//dd($filmFinded);
-            if (file_put_contents('uploads/affiches/' . $file_name, file_get_contents($url))) {
-                $film = new Film();
-                $film->setTitre($filmFinded['title']);
-                $film->setTitreOriginal($filmFinded['original_title']);
-                $film->setReleaseDate(new \DateTimeImmutable($filmFinded['release_date']));
-                $film->setAnneeSortie(intval($newsTitre->getAnnee()));
-                $film->setExtension($newsTitre->getExtension());
-                $film->setCodeTmbd($filmFinded['imdb_id'] ?? "");
-                $film->setCoupDeCoeur('false');
-                $film->setAGarder('false');
-                $film->setVu('false');
-                $film->setMedia($filmFinded['poster_path']);
-//            $film->addVersion($import->getLangue());
-//            $film->addCategory($filmFinded['title']);
-//                foreach ($filmFinded['genres'] as $genre) {
-//                    $film->addGenre($genre['name']);
-//                }
-//                foreach ($filmFinded['genres'] as $genre) {
-//                    $film->addLangue($genre['original_language']);
-//                }
-                $em->persist($film);
-                $em->remove($newsTitre);
+            dump($import);
+            $result = $this->findOneFilm($import->getFichier(), $import->getAnnee());
+            if ($result!=[]) {
+                // On récupère l'affiche et on l'enregistre
+                $url = 'https://image.tmdb.org/t/p/w500' . $result['poster_path'];
+                $affiche = basename($url);
+//                file_put_contents('uploads/affiches/' . $affiche, file_get_contents($url));
+//                // On crée le film
+//                $this->newFilm($result);
+                //return ->render('test/choix.html.twig',compact('results'));
+            } else {
+                // TODO
+//                dd('RIEN du tout');
+                //return $this->render('test/index.html.twig',compact('affiche', 'id', 'film'));
             }
         }
-        $em->flush();
         $this->addFlash('success', 'Transfert effectué');
+    }
 
-        return $this->redirectToRoute('app_admin');
+
+    public function newFilm(EntityManagerInterface $em, $filmFinded, Import $newsTitre): void
+    {
+        $film = new Film();
+        $film->setTitre($filmFinded['title']);
+        $film->setTitreOriginal($filmFinded['original_title']);
+        $film->setReleaseDate(new \DateTimeImmutable($filmFinded['release_date']));
+//        $film->setAnneeSortie(intval($newsTitre->getAnnee()));
+//        $film->setExtension($newsTitre->getExtension());
+        $film->setCodeTmbd($filmFinded['imdb_id'] ?? "");
+        $film->setCoupDeCoeur('false');
+        $film->setAGarder('false');
+        $film->setVu('false');
+        $film->setMedia($filmFinded['poster_path']);
+//        $film->addVersion($import->getLangue());
+        $film->addCategory($filmFinded['title']);
+        foreach ($filmFinded['genres'] as $genre) {
+            $film->addGenre($genre['name']);
+        }
+        foreach ($filmFinded['genres'] as $genre) {
+            $film->addLangue($genre['original_language']);
+        }
+        $em->persist($film);
+        $em->remove($newsTitre);
+        $em->flush();
     }
 }

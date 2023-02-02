@@ -1,0 +1,11 @@
+{% extends '/base.html.twig' %}
+
+{% block title %}Test!{% endblock %}
+
+{% block body %}
+    <div style="background-color: #e3c8cf; min-height: 400px">
+        <div class="container">
+            <h1> ADMINISTRATION </h1>
+            {% dump(user) %}
+    </div>
+{% endblock %}

@@ -2,43 +2,36 @@
 
 namespace App\Controller;
 
-use App\Entity\Users;
+use App\Entity\User;
 use App\Repository\ImportRepository;
-use App\Repository\UsersRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class AdminController extends AbstractController
 {
-    #[Route('/', name: 'app_admin')]
-    public function index(ImportRepository $repo): Response
+    #[Route('/admin', name: 'app_admin')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function admin(#[CurrentUser] ?User $user): Response
     {
-        $nb_imports = $repo->count([]);
-        $fichier_exist = false;
-
-        $finder = new Finder();
-        $finder->files()->in('/Users/gilles/Sites/S6/GRENIER/public/data');
-
-        foreach ($finder as $file) {
-            if($file->getFilename()=='Films.csv'){
-                $fichier_exist = true;
-            };
-        }
-        return $this->render('admin/index.html.twig', compact('nb_imports', 'fichier_exist'));
+        return $this->render('admin/admin.html.twig', compact('user'));
     }
 
-    #[Route('/data', name: 'app_data')]
-    public function data(UsersRepository $repo): Response
+    #[Route('/create-admin', name: 'app_create_admin')]
+    public function createAdmin(UserRepository $repo): Response
     {
-        $u = new Users();
+        $u = new User();
         $u->setName('SALMON');
         $u->setForename('Gilles');
         $u->setEmail('g.salmon@free.fr');
+        $u->setRoles(['USER_ADMIN']);
 
-//        symfony console security:hash sellig
+        // symfony console security:hash sellig
         $u->setPassword('$2y$13$cBJoq4FkvLi6tplVHJ8nDOqNMpEuW8KBqyOUGXWPW3VjhFz6.8V2C');
 
         $repo->save($u, flush: true);
