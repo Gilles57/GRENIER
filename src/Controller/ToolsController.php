@@ -4,19 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Film;
 use App\Entity\Import;
-use App\Form\FilmSearchFormType;
+use App\Service\TmbdServices;
 use App\Repository\FilmRepository;
 use App\Repository\ImportRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use JetBrains\PhpStorm\NoReturn;
 use League\Csv\Reader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\BufferedOutput;
-use Symfony\Component\Console\Output\NullOutput;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -34,33 +27,7 @@ class ToolsController extends AbstractController
 
     //---------------------- FONCTIONS UTILITAIRES ------------------------------//
 
-    public function findOneFilm(
-        string $titre,
-        string $annee,
-    ): array
-    {
-        $response = $this->client->request(
-            'GET',
-            'https://api.themoviedb.org/3/search/movie?api_key=c7924bfc3e4208e9e6eafb5beaee9940&query=' . $titre . '&language=fr'
-        );
-        $temp = json_decode($response->getContent(), true);
-        $result = $temp['results'][0];
 
-        if ($annee == substr($result['release_date'], 0, 4)) {
-            $id = $result['id'];
-
-            // À partir de l'id, on va chercher la fiche détaillée
-            $response = $this->client->request(
-                'GET',
-                'https://api.themoviedb.org/3/movie/' . $id . '?api_key=c7924bfc3e4208e9e6eafb5beaee9940&language=fr'
-            );
-            $film = json_decode($response->getContent(), true);
-
-            return $film;
-        } else {
-            return [];
-        }
-    }
 
     //---------------------- À VERIFIER ------------------------------//
     // takes URL of image and Path for the image as parameter
@@ -108,7 +75,7 @@ class ToolsController extends AbstractController
     #[Route('/import', name: 'app_tools_import_csv')]
     public function importCsv(EntityManagerInterface $em): RedirectResponse
     {
-        $reader = Reader::createFromPath('datas/Films.csv', 'r');
+        $reader = Reader::createFromPath('data/Films.csv', 'r');
         $reader->setDelimiter('|');
 
         $records = $reader->getIterator();
@@ -122,62 +89,48 @@ class ToolsController extends AbstractController
             $em->persist($import);
         }
         $em->flush();
-        $this->addFlash('success', 'Les données ont été importées avec succès.');
 
-        return $this->redirectToRoute('app_admin');
+        $process = new Process(['python3', '/Users/gilles/Documents/INFORMATIQUE/CODES_SOURCES/Python/Outils/delete-catalogue-file.py']);
+        $process->run();
+        // executes after the command finishes
+        if (!$process->isSuccessful()) {
+            $this->addFlash('danger', 'Il y a eu un problème pendant la suppression du fichier');
+            throw new ProcessFailedException($process);
+        } else {
+            $this->addFlash('success', 'Les données ont été importées avec succès et le fichier a été supprimé');
+        }
+        return $this->redirectToRoute('app_workflow');
     }
 
     // Transfert des Imports dans Films
     #[Route('/load_films', name: 'app_tools_load_films')]
-    public function load(ImportRepository $importRepository, FilmRepository $filmRepository)
+    public function load(TmbdServices $get_data, ImportRepository $importRepository, FilmRepository $filmRepository)
     {
         $imports = $importRepository->findAll();
 
         foreach ($imports as $import) {
 
-            dump($import);
-            $result = $this->findOneFilm($import->getFichier(), $import->getAnnee());
-            if ($result!=[]) {
+            $result = $get_data->findData($import->getFichier(), $import->getAnnee());
+            if ($result != ['non !']) {
                 // On récupère l'affiche et on l'enregistre
                 $url = 'https://image.tmdb.org/t/p/w500' . $result['poster_path'];
+//                dump($import->getFichier()." a été trouvé");
                 $affiche = basename($url);
-//                file_put_contents('uploads/affiches/' . $affiche, file_get_contents($url));
+                file_put_contents('uploads/affiches/' . $affiche, file_get_contents($url));
 //                // On crée le film
-//                $this->newFilm($result);
+                $this->newFilm($result);
                 //return ->render('test/choix.html.twig',compact('results'));
             } else {
                 // TODO
+                dump($import->getFichier()." n'a pas été trouvé");
 //                dd('RIEN du tout');
                 //return $this->render('test/index.html.twig',compact('affiche', 'id', 'film'));
             }
         }
         $this->addFlash('success', 'Transfert effectué');
+        die();
     }
 
 
-    public function newFilm(EntityManagerInterface $em, $filmFinded, Import $newsTitre): void
-    {
-        $film = new Film();
-        $film->setTitre($filmFinded['title']);
-        $film->setTitreOriginal($filmFinded['original_title']);
-        $film->setReleaseDate(new \DateTimeImmutable($filmFinded['release_date']));
-//        $film->setAnneeSortie(intval($newsTitre->getAnnee()));
-//        $film->setExtension($newsTitre->getExtension());
-        $film->setCodeTmbd($filmFinded['imdb_id'] ?? "");
-        $film->setCoupDeCoeur('false');
-        $film->setAGarder('false');
-        $film->setVu('false');
-        $film->setMedia($filmFinded['poster_path']);
-//        $film->addVersion($import->getLangue());
-        $film->addCategory($filmFinded['title']);
-        foreach ($filmFinded['genres'] as $genre) {
-            $film->addGenre($genre['name']);
-        }
-        foreach ($filmFinded['genres'] as $genre) {
-            $film->addLangue($genre['original_language']);
-        }
-        $em->persist($film);
-        $em->remove($newsTitre);
-        $em->flush();
-    }
+
 }

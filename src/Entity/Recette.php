@@ -25,7 +25,7 @@ class Recette
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $illustration;
 
-    #[ORM\Column(type: 'string', length: 20)]
+    #[ORM\Column(type: 'string', length: 255)]
     private ?string $dureePreparation;
 
     #[ORM\OneToMany(mappedBy: 'secteur_recette', targetEntity: Ingredient::class, orphanRemoval: true)]

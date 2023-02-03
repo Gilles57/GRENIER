@@ -19,7 +19,7 @@ class Ingredient
     #[ORM\Column(type: 'integer')]
     private $Quantite;
 
-    #[ORM\Column(type: 'string', length: 20)]
+    #[ORM\Column(type: 'string', length: 255)]
     private $UniteDeMesure;
 
     #[ORM\ManyToOne(targetEntity: Recette::class, inversedBy: 'Ingredients')]

@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\LangueRepository;
+use App\Repository\FranchiseRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: LangueRepository::class)]
-class Langue
+#[ORM\Entity(repositoryClass: FranchiseRepository::class)]
+class Franchise
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -16,9 +16,9 @@ class Langue
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    private ?string $titre = null;
 
-    #[ORM\ManyToMany(targetEntity: Film::class, mappedBy: 'langues')]
+    #[ORM\OneToMany(mappedBy: 'franchise', targetEntity: Film::class)]
     private Collection $films;
 
     public function __construct()
@@ -31,14 +31,14 @@ class Langue
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getTitre(): ?string
     {
-        return $this->name;
+        return $this->titre;
     }
 
-    public function setName(string $name): self
+    public function setTitre(string $titre): self
     {
-        $this->name = $name;
+        $this->titre = $titre;
 
         return $this;
     }
@@ -55,7 +55,7 @@ class Langue
     {
         if (!$this->films->contains($film)) {
             $this->films->add($film);
-            $film->addLangue($this);
+            $film->setFranchise($this);
         }
 
         return $this;
@@ -64,7 +64,10 @@ class Langue
     public function removeFilm(Film $film): self
     {
         if ($this->films->removeElement($film)) {
-            $film->removeLangue($this);
+            // set the owning side to null (unless already changed)
+            if ($film->getFranchise() === $this) {
+                $film->setFranchise(null);
+            }
         }
 
         return $this;

@@ -26,9 +26,6 @@ class Film
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $titreOriginal;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $anneeSortie;
-
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $media;
 
@@ -41,10 +38,7 @@ class Film
     #[ORM\Column(type: 'boolean')]
     private ?bool $coupDeCoeur;
 
-    #[ORM\ManyToMany(targetEntity: CatFilm::class, inversedBy: 'videos_films')]
-    private  $category;
-
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $code_tmbd = null;
 
     #[ORM\ManyToMany(targetEntity: Genre::class, inversedBy: 'videos_films')]
@@ -59,15 +53,23 @@ class Film
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(length: 5, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $extension = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $release_date = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $commentaires = null;
+
+    #[ORM\Column]
+    private ?bool $aRemplacer = null;
+
+    #[ORM\ManyToOne(inversedBy: 'films')]
+    private ?Franchise $franchise = null;
+
     public function __construct()
     {
-        $this->category = new ArrayCollection();
         $this->genres = new ArrayCollection();
         $this->version = new ArrayCollection();
         $this->langues = new ArrayCollection();
@@ -98,18 +100,6 @@ class Film
     public function setTitreOriginal(?string $titreOriginal): self
     {
         $this->titreOriginal = $titreOriginal;
-
-        return $this;
-    }
-
-    public function getAnneeSortie(): ?int
-    {
-        return $this->anneeSortie;
-    }
-
-    public function setAnneeSortie(?int $anneeSortie): self
-    {
-        $this->anneeSortie = $anneeSortie;
 
         return $this;
     }
@@ -162,29 +152,7 @@ class Film
         return $this;
     }
 
-    /**
-     * @return Collection<int, CatFilm>
-     */
-    public function getCategory(): Collection
-    {
-        return $this->category;
-    }
 
-    public function addCategory(CatFilm $category): self
-    {
-        if (!$this->category->contains($category)) {
-            $this->category[] = $category;
-        }
-
-        return $this;
-    }
-
-    public function removeCategory(CatFilm $category): self
-    {
-        $this->category->removeElement($category);
-
-        return $this;
-    }
 
     public function getCodeTmbd(): ?string
     {
@@ -198,10 +166,7 @@ class Film
         return $this;
     }
 
-    /**
-     * @return Collection<int, Genre>
-     */
-    public function getGenres(): Collection
+    public function getGenres()
     {
         return $this->genres;
     }
@@ -222,10 +187,7 @@ class Film
         return $this;
     }
 
-    /**
-     * @return Collection<int, Version>
-     */
-    public function getVersion(): Collection
+    public function getVersion()
     {
         return $this->version;
     }
@@ -246,10 +208,7 @@ class Film
         return $this;
     }
 
-    /**
-     * @return Collection<int, Langue>
-     */
-    public function getLangues(): Collection
+    public function getLangues()
     {
         return $this->langues;
     }
@@ -305,4 +264,41 @@ class Film
 
         return $this;
     }
+
+    public function getCommentaires(): ?string
+    {
+        return $this->commentaires;
+    }
+
+    public function setCommentaires(?string $commentaires): self
+    {
+        $this->commentaires = $commentaires;
+
+        return $this;
+    }
+
+    public function isARemplacer(): ?bool
+    {
+        return $this->aRemplacer;
+    }
+
+    public function setARemplacer(bool $aRemplacer): self
+    {
+        $this->aRemplacer = $aRemplacer;
+
+        return $this;
+    }
+
+    public function getFranchise(): ?Franchise
+    {
+        return $this->franchise;
+    }
+
+    public function setFranchise(?Franchise $franchise): self
+    {
+        $this->franchise = $franchise;
+
+        return $this;
+    }
+
 }

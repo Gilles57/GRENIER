@@ -15,7 +15,7 @@ class CatFilm
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\Column(type: 'string', length: 50)]
+    #[ORM\Column(type: 'string', length: 255)]
     private ?string $name;
 
     #[ORM\ManyToMany(targetEntity: Film::class, mappedBy: 'category')]

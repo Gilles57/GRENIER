@@ -19,13 +19,13 @@ class Import
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $title = null;
 
-    #[ORM\Column(length: 5, nullable: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $extension = null;
 
-    #[ORM\Column(length: 10, nullable: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $langue = null;
 
-    #[ORM\Column(length: 4, nullable: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $annee = null;
 
     public function getId(): ?int
