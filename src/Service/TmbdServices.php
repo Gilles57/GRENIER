@@ -34,19 +34,21 @@ class TmbdServices
         );
         $temp = json_decode($response->getContent(), true);
         $results = $temp['results'];
-        foreach ($results as $result) {
-            dump($result);
-            if ($annee == null || ($annee == substr($result['release_date'], 0, 4))) {
-                $id = $result['id'];
+//            dd($results, $annee);
+            foreach ($results as $result) {
+                if ($annee && array_key_exists('release_date', $result )) {
+//                    $annee == substr($result['release_date'], 0, 4);
+                    $id = $result['id'];
 
-                // À partir de l'id, on va chercher la fiche détaillée
-                $response = $this->client->request(
-                    'GET',
-                    'https://api.themoviedb.org/3/movie/' . $id . '?api_key=c7924bfc3e4208e9e6eafb5beaee9940&language=fr'
-                );
-                $retour=  json_decode($response->getContent(), true);
+                    // À partir de l'id, on va chercher la fiche détaillée
+                    $response = $this->client->request(
+                        'GET',
+                        'https://api.themoviedb.org/3/movie/' . $id . '?api_key=c7924bfc3e4208e9e6eafb5beaee9940&language=fr'
+                    );
+                    $retour = json_decode($response->getContent(), true);
+                }
             }
-        }
+
         return $retour;
     }
 }

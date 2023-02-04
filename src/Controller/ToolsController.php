@@ -2,10 +2,9 @@
 
 namespace App\Controller;
 
-use App\Entity\Film;
 use App\Entity\Import;
+use App\Service\FilmsServices;
 use App\Service\TmbdServices;
-use App\Repository\FilmRepository;
 use App\Repository\ImportRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Csv\Reader;
@@ -26,7 +25,6 @@ class ToolsController extends AbstractController
     }
 
     //---------------------- FONCTIONS UTILITAIRES ------------------------------//
-
 
 
     //---------------------- À VERIFIER ------------------------------//
@@ -104,33 +102,40 @@ class ToolsController extends AbstractController
 
     // Transfert des Imports dans Films
     #[Route('/load_films', name: 'app_tools_load_films')]
-    public function load(TmbdServices $get_data, ImportRepository $importRepository, FilmRepository $filmRepository)
+    public function load(
+        FilmsServices          $filmsServices,
+        TmbdServices           $get_data,
+        ImportRepository       $importRepository,
+        EntityManagerInterface $em,
+        )
     {
         $imports = $importRepository->findAll();
 
         foreach ($imports as $import) {
 
-            $result = $get_data->findData($import->getFichier(), $import->getAnnee());
-            if ($result != ['non !']) {
+            $data = $get_data->findData( $import->getFichier(), $import->getAnnee());
+            if ($data != ['non !']) {
                 // On récupère l'affiche et on l'enregistre
-                $url = 'https://image.tmdb.org/t/p/w500' . $result['poster_path'];
-//                dump($import->getFichier()." a été trouvé");
-                $affiche = basename($url);
-                file_put_contents('uploads/affiches/' . $affiche, file_get_contents($url));
-//                // On crée le film
-                $this->newFilm($result);
-                //return ->render('test/choix.html.twig',compact('results'));
+                if($data['poster_path']){
+                    $url = 'https://image.tmdb.org/t/p/w500' . $data['poster_path'];
+                    $affiche = basename($url);
+                    file_put_contents('uploads/affiches/' . $affiche, file_get_contents($url));
+                } else {
+                    $data['poster_path'] = 'Photo_non_disponible';
+                }
+                // On crée le film
+                $filmsServices->newFilm($em, $data);
+                // On supprime l'import
+                $importRepository->remove($import);
             } else {
                 // TODO
-                dump($import->getFichier()." n'a pas été trouvé");
+                dump($import->getFichier() . " n'a pas été trouvé");
 //                dd('RIEN du tout');
-                //return $this->render('test/index.html.twig',compact('affiche', 'id', 'film'));
             }
         }
+        $em->flush();
         $this->addFlash('success', 'Transfert effectué');
-        die();
     }
-
 
 
 }
