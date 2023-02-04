@@ -3,38 +3,14 @@ window.onload = (event) => {
     console.log(screen.width);
 }
 
-window.addEventListener('load', function () {
-    const img = $(".slidable")
-    img.hide();
-    img.slideUp(0);
-    img.slideDown(1000);
+let d1 = document.getElementById("bandeau");
+let togg = document.getElementById("togg");
+console.log(togg)
+togg.addEventListener("click", () => {
+
+    if(getComputedStyle(d1).display !== "none"){
+        d1.style.display = "none";
+    } else {
+        d1.style.display = "block";
+    }
 });
-
-window.addEventListener('load', function () {
-    const img = $(".effet")
-    img.hide();
-    img.slideUp(0);
-    img.slideDown(2000);
-});
-
-const items = document.getElementsByClassName("survol");
-
-for (const item of items) {
-    item.addEventListener("mouseover", function () {
-        this.style.cursor = 'pointer';
-    })
-}
-
-for (const item of items) {
-    item.addEventListener("click", function () {
-        const path = item.dataset.lien;
-        window.location.href = path;
-    });
-}
-
-$("#myModalBtn").click(function () {
-    $('#myModal').modal('show')
-});
-
-
-
