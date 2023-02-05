@@ -12,15 +12,19 @@ class FilmsServices
     /**
      * @throws \Exception
      */
-    public function newFilm(EntityManagerInterface $em, $datas): void
+    public function newFilm(EntityManagerInterface $em, $datas,$fichier, $annee): void
     {
         $film = new Film();
+        $film->setFichierOriginal($fichier);
+        $film->setDateOriginale($annee);
         $film->setTitre($datas['title']);
         $film->setTitreOriginal($datas['original_title']);
         $film->setReleaseDate(new \DateTimeImmutable($datas['release_date'] ?? ""));
         $film->setExtension("");
         $film->setCodeTmbd($datas['imdb_id'] ?? "");
         $film->setMedia($datas['poster_path']);
+        $film->setSlogan($datas['tagline']);
+        $film->setResume($datas['overview']);
         $film->setCommentaires('');
 
 //        $film->addVersion("");
@@ -30,10 +34,10 @@ class FilmsServices
 //        foreach ($datas['langues'] as $langue) {
 //            $film->addLangue($langue['spoken_languages']);
 //        }
-        $film->setCoupDeCoeur('false');
-        $film->setAGarder('false');
-        $film->setARemplacer('false');
-        $film->setVu('false');
+        $film->setCoupDeCoeur(false);
+        $film->setAGarder(false);
+        $film->setARemplacer(false);
+        $film->setVu(false);
 
         $em->persist($film);
         $em->flush();

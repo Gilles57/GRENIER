@@ -15,24 +15,23 @@
                         </li>
                     {% else %}
                         <li class="list-group-item">
-                            <a href="{{ path('app_tools_create_catalogue') }}">Créer le fichier avec Pyhon</a>
+                            <a href="{{ path('app_tools_create_fichier') }}">Créer le fichier avec Pyhon</a>
                         </li>
                     {% endif %}
                     {% if nb_imports > 0 %}
                         <li class="list-group-item disabled text-bg-danger">
                             <a href="#">✔ Catalogue déjà chargé</a>
                         </li>
-                        <li class="list-group-item"><a href="{{ path('app_tools_load_films') }}">Traiter les imports ( {{ nb_imports }} lignes)</a></li>
+                        <li class="list-group-item"><a href="{{ path('app_tools_transfert_to_films') }}">Import du csv
+                                ( {{ nb_imports }} lignes)</a></li>
                     {% else %}
                         <li class="list-group-item">
-                            <a href="{{ path('app_tools_import_csv') }}">Charger le catalogue</a>
+                            <a href="{{ path('app_tools_make_import_csv') }}">Import du csv</a>
                         </li>
                         <li class="list-group-item disabled"><a href="#">Pas d'imports à traiter</a></li>
                     {% endif %}
-                    <li class="list-group-item"><a href="#">Ajouter un film</a></li>
+
                     <li class="list-group-item"><a href="{{ path('app_home') }}">Retour à l'accueil</a></li>
-                    <li class="list-group-item"><a href="{{ path('app_tools_import_csv') }}">Import du csv</a></li>
-{#                    <li class="list-group-item"><a href="{{ path('app_load_film', {titre: 'avatar'}) }}">TESTS</a></li>#}
                 </ul>
             </div>
         </div>

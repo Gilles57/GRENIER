@@ -11,9 +11,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-#[Route('/')]
+#[Route('/films')]
 class FilmController extends AbstractController
 {
 
@@ -24,40 +28,44 @@ class FilmController extends AbstractController
         $this->client = $client;
     }
 
-    #[Route('/films', name: 'app_films')]
+    #[Route('/index', name: 'app_films')]
     public function films(FilmRepository $filmRepository, PaginatorInterface $paginator, Request $request): Response
     {
         $query = $filmRepository->getAllFilms();
-        $limit = 4;
+        $limit = 25;
         $page = $request->query->getInt('page', 1);
         if ($page === 0) $page = 1;
         $films = $paginator->paginate($query, $page, $limit);
 
-        return $this->render('videos_films/films.html.twig', compact('films'));
+        return $this->render('videos_films/films_index.html.twig', compact('films'));
     }
 
-
-    #[Route('/film/{id}', name: 'app_film_show')]
+    #[Route('/show/{id}', name: 'app_film_show')]
     public function films_show(FilmRepository $filmRepository, ?int $id): Response
     {
         $film = $filmRepository->find($id);
         return $this->render('videos_films/film_show.html.twig', compact('film'));
     }
 
-    #[Route('/film/new', name: 'app_film_new')]
+    #[Route('/new', name: 'app_film_new')]
     public function film_new(FilmsServices $filmsServices): Response
     {
         $data = [];
         $filmsServices->newFilm($data);
         $this->addFlash('success', 'Film ajouté');
-        return $this->render('videos_films/films.html.twig');
+        return $this->render('videos_films/films_index.html.twig');
     }
 
-    #[Route('/findIMBD', name: 'tools_find_imbd')]
+    /**
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ClientExceptionInterface
+     */
+    #[Route('/findTMBD', name: 'app_film_find_tmbd')]
     public function find(TmbdServices $get_data, Request $request): Response
     {
         $form = $this->createForm(FilmSearchFormType::class);
-
 
         $form->handleRequest($request);
         $films=[];
@@ -66,12 +74,8 @@ class FilmController extends AbstractController
             $entity = $form->getData();
             $data = $get_data->findData($entity['titre'], $entity['annee']);
 
-
             return $this->render('videos_films/apercu.html.twig', compact('data'));
         }
-
-            return $this->render('videos_films/recherche.html.twig', compact('form', 'films'));
+            return $this->render('videos_films/recherche.html.twig', compact('form'));
     }
-
-
 }
