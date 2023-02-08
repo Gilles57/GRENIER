@@ -12,19 +12,19 @@ class FilmsServices
     /**
      * @throws \Exception
      */
-    public function newFilm(EntityManagerInterface $em, $datas,$fichier, $annee): void
+    public function newFilm(EntityManagerInterface $em, $datas, $fichier, $annee): void
     {
         $film = new Film();
         $film->setFichierOriginal($fichier);
         $film->setDateOriginale($annee);
-        $film->setTitre($datas['title']);
-        $film->setTitreOriginal($datas['original_title']);
-        $film->setReleaseDate(new \DateTimeImmutable($datas['release_date'] ?? ""));
+        $film->setTitre($datas['title'] ?? 'TITRE MANQUANT');
+        $film->setTitreOriginal($datas['original_title'] ?? 'TITRE ORIGINAL MANQUANT');
+        $film->setReleaseDate($datas['release_date'] ? new \DateTimeImmutable($datas['release_date']) : null);
         $film->setExtension("");
-        $film->setCodeTmbd($datas['imdb_id'] ?? "");
+        $film->setCodeTmbd($datas['imdb_id'] ?? null);
         $film->setMedia($datas['poster_path']);
-        $film->setSlogan($datas['tagline']);
-        $film->setResume($datas['overview']);
+        $film->setSlogan($datas['tagline'] ?? 'TAGLINE MANQUANTE');
+        $film->setResume($datas['overview'] ?? 'OVERVIEW MANQUANT');
         $film->setCommentaires('');
 
 //        $film->addVersion("");

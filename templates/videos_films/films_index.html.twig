@@ -3,13 +3,14 @@
 {% block title %}Films et séries{% endblock %}
 
 {% block body %}
+{% include '_partials/_menu.html.twig' %}
     <div class="jumbotron  jumbotron-fluid my-3 p-3 text-center">
         <h1 class="display-4 fw-bold"><i class="fa-solid fa-photo-film"></i> Films<i
                     class="fa-solid fa-photo-film"></i></h1>
     </div>
     <div class="container">
         <div class="count bg-info">
-           Nb total :  {{ films.getTotalItemCount }}
+            Nb total : {{ films.getTotalItemCount }}
         </div>
         <div class="container align-content-start">
             <table class="table table-striped table-hover table-sm border border-1 border-dark">
@@ -24,16 +25,16 @@
                 </thead>
                 <tbody>
                 {% for film in films %}
-                    <tr  class="survol" id="{{ film.id }}" data-lien="{{ path('app_film_show', {id: film.id}) }}">
-                        <th scope="row">
-                            <a href="{{ path('app_film_show', {id: film.id}) }}">👁️</a>
-                        </th>
+{#                    {{ dump(film) }}#}
+                    <tr class="survol" id="{{ film.id }}" data-lien="{{ path('app_film_show', {id: film.id}) }}">
+                        <td><a href="{{ path('app_film_show', {id: film.id}) }}">👁️</a></td>
                         <td>
-                            <img src="/uploads/affiches{{ film.media }}" alt="/uploads/affiches{{ film.media }}" style="width: 50px; height: 75px">
+                            <img src="/uploads/affiches{{ film.media }}" alt="/uploads/affiches{{ film.media }}"
+                                 style="width: 50px; height: 75px">
                         </td>
                         <td>{% if  film.coupDeCoeur %}❤️{% endif %}</td>
-                        <td>{{ film.releaseDate | date ('Y')}}</td>
-                        <td>{{ film.titre }}<br>{{ film.fichierOriginal }}</td>
+                        <td>{{ film.releaseDate is empty ? "" : film.releaseDate | date ('Y') }}</td>
+                        <td>{{ film.titre }}<br>[{{ film.fichierOriginal }}]</td>
                     </tr>
                 {% endfor %}
                 </tbody>

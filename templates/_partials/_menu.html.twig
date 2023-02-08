@@ -43,31 +43,28 @@
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="{{ path('app_workflow') }}">Le workflow</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{{ path('app_tools_create_fichier') }}">Créer le fichier avec Pyhon</a>
+                        <a class="dropdown-item" href="{{ path('app_tools_create_fichier') }}">Créer le fichier avec
+                            Pyhon</a>
                         <a class="dropdown-item" href="{{ path('app_tools_make_import_csv') }}">Import du csv</a>
-                        <a class="dropdown-item" href="{{ path('app_tools_transfert_to_films') }}">Traiter les imports</a>
+                        <a class="dropdown-item" href="{{ path('app_tools_transfert_auto_to_films') }}">Traiter
+                            automatiquement les imports</a>
+                        <a class="dropdown-item" href="{{ path('app_tools_transfert_manuel_to_films') }}">Traiter
+                            manuellement les imports</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item"
-                           href="{{ path('app_workflow', {'titre': "Swallows and Amazons", 'annee': '1974'}) }}">Swallows and Amazons</a>
+                           href="{{ path('app_workflow', {'titre': "Swallows and Amazons", 'annee': '1974'}) }}">Swallows
+                            and Amazons</a>
                         <a class="dropdown-item" href="{{ path('app_film_find_tmbd') }}">Chercher un film sur Tmbd</a>
                     </div>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link">Workflow</a>
                 </li>
                 {#                <li class="nav-item active"> #}
                 {#                    <a class="nav-link" href="{{ path('app_test', {'titre': "Swallows and Amazons", 'annee': '1974'}) }}">Tests</a> #}
                 {#                </li> #}
             </ul>
             <ul class="navbar-nav d-flex">
-                <li class="nav-item">
-                    <a class="btn btn-outline-info" id="togg">
-                        Bandeau
-                    </a>
-                </li>
-                <li class="nav-item mx-1">
-                    <a class="btn btn-outline-danger" href="{{ path('app_admin') }}">Admin</a>
-                </li>
+{#                <li class="nav-item mx-1">#}
+{#                    <a class="btn btn-outline-danger" href="{{ path('app_admin') }}">Admin</a>#}
+{#                </li>#}
             </ul>
         </div>
     </nav>

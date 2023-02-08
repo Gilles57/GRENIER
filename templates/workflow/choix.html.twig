@@ -3,33 +3,29 @@
 {% block title %}Hello TestController!{% endblock %}
 
 {% block body %}
-<div class="container">
-    <div class="row">
-        <h1> Choix possibles</h1>
-        <hr>
-    </div>
-    <div class="row">
-        {% for result in results %}
+    {% include '_partials/_menu.html.twig' %}
+    <div class="container">
         <div class="row">
-            <div class="col-4">
-                <div class="imgBx">
-                    <img class="test"
-                         src='https://image.tmdb.org/t/p/w500/{{ result.backdrop_path }}'
-                         alt="Card image Informatique"
-                         style="height: 10rem">
+            {% for result in results %}
+            <div class="row">
+                <h1>
+                    {{ result.import.annee }} - {{ result.import.fichier }}
+                </h1>
+                <div>
+                    {% for data in result.datas %}
+{#                        {{ dump(result) }}#}
+                        <h6><a href="{{ path('app_tools_ajout_manuel', {dataId: data.id, importId: result.import.id}) }}">{{ data.id }}</a>
+                            • {% if data.release_date != "" %}{{ data.release_date | date('Y') }}{% endif %} •
+                            {{ data.title }}
+                            [{{ data.original_title }}]
+                        </h6>
+
+                    {% endfor %}
                 </div>
 
+                <hr>
+                {% endfor %}
             </div>
-            <div class="col-8">
-
-                <p><span class="fw-bold">Titre original : </span>{{ result.original_title }} - <span class="fw-bold">Date de sortie : </span>{{ result.release_date }}
-                </p>
-                <p><span class="fw-bold">Résumé : </span>{{ result.overview }}</p>
-                <p>{{ dump(result) }}</p>
-            </div>
-
-            <hr>
-            {% endfor %}
         </div>
     </div>
-    {% endblock %}
+{% endblock %}
