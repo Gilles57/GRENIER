@@ -1,0 +1,63 @@
+{% extends '../../../base.html.twig' %}
+
+{% block title %}Hello TestController!{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <h1> {{ film.title }}</h1>
+            <h5>{{ film.tagline }}</h5>
+            <hr>
+        </div>
+        <div class="row">
+            <div class="col-4">
+                <h4><span class="fw-bold">Id : </span>{{ id }} - <span
+                            class="fw-bold">Imdb_id : </span>{{ film.imdb_id }}</h4>
+                <div class="imgBx">
+                    <img class="test"
+                         src="{{ asset('/uploads/affiches/'~affiche ) }}"
+                         alt="Card image Informatique"
+                         style="height: 10rem">
+                </div>
+                <br>
+                <p><span class="fw-bold">Résumé : </span>{{ film.overview }}</p>
+            </div>
+            <div class="col-4">
+                <p><span class="fw-bold">Adultes :  </span>{{ film.adult }}</p>
+                {% if  film.belongs_to_collection is not null %}
+                    <p><span class="fw-bold">Collection  : </span>{{ film.belongs_to_collection.name }}</p>
+                {% endif %}
+                <p><span class="fw-bold">Genres : </span>
+                    {% for genre in film.genres %}
+                        {{ genre.name }},
+                    {% endfor %}</p>
+                <p><span class="fw-bold">Homepage : </span>{{ film.homepage }}</p>
+                <p><span class="fw-bold">Langue originale : </span>{{ film.original_language }}</p>
+                <p><span class="fw-bold">Titre original : </span>{{ film.original_title }}</p>
+
+                <p><span class="fw-bold">Popularité : </span>{{ film.popularity }}</p>
+                <p><span class="fw-bold">Compagnies : </span>
+                    {% for cie in film.production_companies %}
+                        {{ cie.name }},
+                    {% endfor %}</p>
+            </div>
+            <div class="col-4">
+                <p><span class="fw-bold">Pays : </span>
+                    {% for pays in film.production_countries %}
+                        {{ pays.name }},
+                    {% endfor %}</p>
+                <p><span class="fw-bold">Date de sortie : </span>{{ film.release_date }}</p>
+                <p><span class="fw-bold">Revenue : </span>{{ film.revenue }}</p>
+                <p><span class="fw-bold">Runtime ??? : </span>{{ film.runtime }}</p>
+                <p><span class="fw-bold">Langues : </span>
+                    {% for langue in film.spoken_languages %}
+                        {{ langue.name }},
+                    {% endfor %}</p>
+                <p><span class="fw-bold">Status : </span>{{ film.status }}</p>
+                <p><span class="fw-bold">Video : </span>{{ film.video }}</p>
+                <p><span class="fw-bold">Moyenne des votes : </span>{{ film.vote_average }}</p>
+                <p><span class="fw-bold">Nb de votes : </span>{{ film.vote_count }}</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

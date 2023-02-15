@@ -68,6 +68,19 @@ class Film
     #[ORM\ManyToOne(inversedBy: 'films')]
     private ?Franchise $franchise = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $slogan = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $resume = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $fichier_original = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $date_originale = null;
+
+
     public function __construct()
     {
         $this->genres = new ArrayCollection();
@@ -300,5 +313,54 @@ class Film
 
         return $this;
     }
+
+    public function getSlogan(): ?string
+    {
+        return $this->slogan;
+    }
+
+    public function setSlogan(?string $slogan): self
+    {
+        $this->slogan = $slogan;
+
+        return $this;
+    }
+
+    public function getResume(): ?string
+    {
+        return $this->resume;
+    }
+
+    public function setResume(?string $resume): self
+    {
+        $this->resume = $resume;
+
+        return $this;
+    }
+
+    public function getFichierOriginal(): ?string
+    {
+        return $this->fichier_original;
+    }
+
+    public function setFichierOriginal(string $fichier_original): self
+    {
+        $this->fichier_original = $fichier_original;
+
+        return $this;
+    }
+
+    public function getDateOriginale(): ?string
+    {
+        return $this->date_originale;
+    }
+
+    public function setDateOriginale(?string $date_originale): self
+    {
+        $this->date_originale = $date_originale;
+
+        return $this;
+    }
+
 
 }

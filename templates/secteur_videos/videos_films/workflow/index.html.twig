@@ -1,0 +1,64 @@
+{% extends '/templates/base.html.twig' %}
+
+{% block title %}Hello AdminController!{% endblock %}
+
+{% block body %}
+    {% include '../../../_partials/_menu.html.twig' %}
+    <div style="background-color: #e3c8cf; min-height: 400px">
+        <div class="container">
+            <h1> Workflow</h1>
+
+            <div>
+                <ul class="list-group list-group-flush">
+                    {% if fichier_exist %}
+                        <li class="list-group-item disabled text-bg-danger">
+                            <a href="#">✔ Le fichier est prêt</a>
+                        </li>
+                    {% else %}
+                        <li class="list-group-item
+                        {% if nb_imports > 0 %} disabled {% endif %}">
+                            <a href="{{ path('app_tools_create_fichier') }}">Créer le fichier avec Python</a>
+                        </li>
+                    {% endif %}
+
+                    {% if nb_imports > 0 %}
+                        <li class="list-group-item disabled text-bg-danger">
+                            <a href="#">✔ Fichier déjà chargé</a>
+                        </li>
+                        <li class="list-group-item"><a href="{{ path('app_tools_transfert_auto_to_films') }}">Import
+                                automatique du csv
+                                ( {{ nb_imports }} {{ 'ligne' | pluralize({'nb': nb_imports}) }} )</a></li>
+                        <li class="list-group-item"><a href="{{ path('app_tools_transfert_manuel_to_films') }}">Import
+                                manuel du csv
+                                ( {{ nb_marked }} {{ 'ligne' | pluralize({'nb': nb_marked}) }} )</a></li>
+                    {% else %}
+                        {% if fichier_exist %}
+                            <li class="list-group-item">
+                                <a href="{{ path('app_tools_make_import_csv') }}">Import automatique du csv</a>
+                            </li>
+                        {% else %}
+                            <li class="list-group-item">
+                                <a href="#">Pas de fichier à importer</a>
+                            </li>                        {% endif %}
+                        <li class="list-group-item disabled"><a href="#">Pas d'imports à traiter</a></li>
+                    {% endif %}
+
+                </ul>
+            </div>
+        </div>
+        <div id="progress-bar">
+
+        </div>
+    </div>
+{% endblock %}
+
+{#{% block javascripts %}#}
+{#<script>#}
+{#const eventSource = new EventSource("{{ mercure('https://example.com/books/1')|escape('js') }}");#}
+{#eventSource.onmessage = event => {#}
+{#    // Will be called every time an update is published by the server#}
+{#    console.log(JSON.parse(event.data));#}
+{#    document.getElementById('progress-bar').innerHTML+= JSON.parse(event.data).status ;#}
+{#}#}
+{#</script>#}
+{#{% endblock %}#}

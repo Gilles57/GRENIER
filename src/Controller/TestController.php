@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Film;
 use App\Repository\FilmRepository;
 use App\Repository\ImportRepository;
+use App\Service\TmbdServices;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -17,9 +18,10 @@ class TestController extends AbstractController
     //---------------------- TEST EN COURS ------------------------------//
 
 
-    #[Route('/test/{titre}/{annee}', name: 'app_test')]
-    public function import_un_film(string $titre, string $annee)
+    #[Route('/test', name: 'app_test')]
+    public function import_un_film(TmbdServices $tmbdServices)
     {
-        return $this->render('test/test.html.twig');
+        $film = $tmbdServices->findData('Avatar');
+        return $this->render('test/test.html.twig', compact ('film'));
     }
 }

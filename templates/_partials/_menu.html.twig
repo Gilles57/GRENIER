@@ -29,28 +29,42 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="{{ path('app_films') }}">Tous mes films</a>
-                        <a class="dropdown-item disabled" href="{{ path('app_film_new') }}">Ajoutyer un film</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{{ path('tools_find_imbd') }}">Chercher un film d'après son titre</a>
-                        <a class="dropdown-item disabled" href="{{ path('tools_find_imbd') }}">Chercher un film d'après son id</a>
+                        <a class="dropdown-item disable" href="{{ path('app_film_show', {id: 1}) }}">Voir un film</a>
+                        <a class="dropdown-item" href="{{ path('app_film_find_tmbd') }}">Chercher un film sur Tmbd</a>
+                        <a class="dropdown-item disabled" href="{{ path('app_film_new') }}">Ajouter un film</a>
                     </div>
                 </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="{{ path('app_test', {'titre': "Swallows and Amazons", 'annee': '1974'}) }}">Tests</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Workflow
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{{ path('app_workflow') }}">Le workflow</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{{ path('app_tools_create_fichier') }}">Créer le fichier avec
+                            Pyhon</a>
+                        <a class="dropdown-item" href="{{ path('app_tools_make_import_csv') }}">Import du csv</a>
+                        <a class="dropdown-item" href="{{ path('app_tools_transfert_auto_to_films') }}">Traiter
+                            automatiquement les imports</a>
+                        <a class="dropdown-item" href="{{ path('app_tools_transfert_manuel_to_films') }}">Traiter
+                            manuellement les imports</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item"
+                           href="{{ path('app_workflow', {'titre': "Swallows and Amazons", 'annee': '1974'}) }}">Swallows
+                            and Amazons</a>
+                        <a class="dropdown-item" href="{{ path('app_film_find_tmbd') }}">Chercher un film sur Tmbd</a>
+                    </div>
                 </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="{{ path('app_workflow', {'titre': "Swallows and Amazons", 'annee': '1974'}) }}">Workflow</a>
-                </li>
+                {#                <li class="nav-item active"> #}
+                {#                    <a class="nav-link" href="{{ path('app_test', {'titre': "Swallows and Amazons", 'annee': '1974'}) }}">Tests</a> #}
+                {#                </li> #}
             </ul>
             <ul class="navbar-nav d-flex">
-                <li class="nav-item">
-                    <a class="btn btn-outline-info" id="togg" >
-                        Bandeau
-                    </a>
-                </li>
-                <li class="nav-item mx-1">
-                    <a class="btn btn-outline-danger" href="{{ path('app_admin') }}">Admin</a>
-                </li>
+{#                <li class="nav-item mx-1">#}
+{#                    <a class="btn btn-outline-danger" href="{{ path('app_admin') }}">Admin</a>#}
+{#                </li>#}
             </ul>
         </div>
     </nav>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex,nofollow"/>
+    <meta name="keywords" content="{% block keywords %}{% endblock %}"/>
+    <meta name="description" content="{% block description %}{% endblock %}"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>{% block title %}{% endblock %}Administration</title>
+    <link rel="icon" type="image/x-icon" href="{{ asset('images/favicon.ico') }}"/>
+
+    {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+    {% endblock %}
+
+
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+        {{ encore_entry_script_tags('custom') }}
+        <script>
+            const alerts = document.querySelectorAll('[class="alert"]')
+            for (const alert of alerts) {
+                setTimeout(function () {
+                    const bootstrapAlert = bootstrap.Alert.getOrCreateInstance(alert);
+                    bootstrapAlert.close();
+                }, 2000);
+            }
+        </script>
+        {#        <script src="https://kit.fontawesome.com/1462ae8225.js" crossorigin="anonymous" defer></script> #}
+    {% endblock %}
+
+</head>
+<body>
+{% include '_partials/_menu_admin.html.twig' %}
+{% include '_partials/_flash.html.twig' %}
+<div class="container">
+    {% block body %}
+    {% endblock body %}
+</div>
+{#{% include '_partials/_footer.html.twig' %}#}
+</body>
+</html>

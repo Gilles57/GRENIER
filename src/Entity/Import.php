@@ -23,10 +23,13 @@ class Import
     private ?string $extension = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $langue = null;
+    private ?string $version = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $annee = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $traitementManuel = null;
 
     public function getId(): ?int
     {
@@ -69,14 +72,14 @@ class Import
         return $this;
     }
 
-    public function getLangue(): ?string
+    public function getVersion(): ?string
     {
-        return $this->langue;
+        return $this->version;
     }
 
-    public function setLangue(?string $langue): self
+    public function setVersion(?string $version): self
     {
-        $this->langue = $langue;
+        $this->version = $version;
 
         return $this;
     }
@@ -89,6 +92,18 @@ class Import
     public function setAnnee(?string $annee): self
     {
         $this->annee = $annee;
+
+        return $this;
+    }
+
+    public function isTraitementManuel(): ?bool
+    {
+        return $this->traitementManuel;
+    }
+
+    public function setTraitementManuel(?bool $traitementManuel): self
+    {
+        $this->traitementManuel = $traitementManuel;
 
         return $this;
     }

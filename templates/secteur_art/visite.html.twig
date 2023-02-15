@@ -1,0 +1,41 @@
+{% extends '/base.html.twig' %}
+
+{% block title %}Expos, monuments, etc.{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-3"><img class="card-img-top" src="{{ asset('uploads/visites/'~visite.media) }}"
+                                alt="Illustration de {{ visite.name }}"
+                                style="width: auto; max-height: 300px;">
+        </div>
+        <div class="col-9 ">
+            <div class="jumbotron  jumbotron-fluid my-3 p-3 text-center">
+                <h1 class="display-4 fw-bold"><i class="fa-solid fa-photo-film"></i> {{ visite.name }}<i
+                            class="fa-solid fa-photo-film"></i></h1>
+                <p class="lead">{{ visite.date | date('d-m-y') }} - {{ visite.lieu }}</p>
+            </div>
+            <p class="card-text fa-align-justify" style=" text-align: justify;">{{ visite.description }}</p>
+            <p class=" text-center">
+                <a href="{{ path('app_visite_show', {id: visite.id}) }}" class="btn btn-secondary ">Visiter</a>
+            </p>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <hr>
+        <div style="display: flex; flex-flow: row wrap;justify-content: space-around;  "
+             class=" d-flex">
+            {% for oeuvre in visite.oeuvres %}
+                <div class="col-md-2 mx-1">
+                    <div class="card mb-4 box-shadow">
+                        <img class="card-img-top"
+                             src="{{ asset('uploads/oeuvres/288d9a0a210b4998f5155ca05704c64d.jpg') }}" alt="#">
+                        <div class="card-body">
+                            <h3 class="card-title">{{ oeuvre.name }}</h3>
+                            <p class="card-text">{{ oeuvre.description }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
@@ -10,7 +11,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class TmbdServices
 {
-    public function __construct(private HttpClientInterface $client,)
+    public function __construct(private HttpClientInterface $client,
+                                private ParameterBagInterface $params)
     {
     }
 
@@ -21,34 +23,35 @@ class TmbdServices
      * @throws ServerExceptionInterface
      */
     public function findData(
-        string  $titre,
-        ?string $annee,
+        string $titre,
     ): array
     {
-        $retour = ["non !"];
+        $retours = [];
+        $key = $this->params->get('api_key_tmdb');
 
         $titre = preg_replace("/[^a-zA-Z0-9\s]/", "", $titre);
         $response = $this->client->request(
             'GET',
-            'https://api.themoviedb.org/3/search/movie?api_key=c7924bfc3e4208e9e6eafb5beaee9940&query=' . $titre . '&language=fr'
+            'https://api.themoviedb.org/3/search/movie?api_key=' . $key . '&query=' . $titre . '&language=fr'
         );
         $temp = json_decode($response->getContent(), true);
         $results = $temp['results'];
-//            dd($results, $annee);
-            foreach ($results as $result) {
-                if ($annee && array_key_exists('release_date', $result )) {
-//                    $annee == substr($result['release_date'], 0, 4);
-                    $id = $result['id'];
+        foreach ($results as $result) {
+            $id = $result['id'];
+            // À partir de l'id, on va chercher la fiche détaillée
+            $response = $this->client->request(
+                'GET',
+                'https://api.themoviedb.org/3/movie/' . $id . '?api_key=' . $key . '&language=fr'
+            );
+            $retours[] = json_decode($response->getContent(), true);
+        }
+        return $retours;
+    }
 
-                    // À partir de l'id, on va chercher la fiche détaillée
-                    $response = $this->client->request(
-                        'GET',
-                        'https://api.themoviedb.org/3/movie/' . $id . '?api_key=c7924bfc3e4208e9e6eafb5beaee9940&language=fr'
-                    );
-                    $retour = json_decode($response->getContent(), true);
-                }
-            }
-
-        return $retour;
+    public function uploadAffiche($posterPath): void
+    {
+        $url = 'https://image.tmdb.org/t/p/w500' . $posterPath;
+        $affiche = basename($url);
+        file_put_contents('uploads/affiches/' . $affiche, file_get_contents($url));
     }
 }

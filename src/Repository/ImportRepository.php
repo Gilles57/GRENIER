@@ -39,6 +39,35 @@ class ImportRepository extends ServiceEntityRepository
         }
     }
 
+        /**
+     * @return Import[] Returns an array of Import objects
+     */
+    public function findAllNoMarked(): array
+    {
+        return $this->createQueryBuilder('i')
+            ->andWhere('i.traitementManuel != true')
+            ->orderBy('i.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+
+    /**
+     * @return Import[] Returns an array of Import objects
+     */
+    public function findAllMarked($limit): array
+    {
+        return $this->createQueryBuilder('i')
+            ->andWhere('i.traitementManuel != false')
+            ->orderBy('i.id', 'ASC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+
 //    /**
 //     * @return Import[] Returns an array of Import objects
 //     */
