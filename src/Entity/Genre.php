@@ -2,12 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\CatFilmRepository;
+use App\Repository\GenreRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: CatFilmRepository::class)]
+#[ORM\Entity(repositoryClass: GenreRepository::class)]
 class Genre
 {
     #[ORM\Id]
@@ -16,7 +16,7 @@ class Genre
     private ?int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $nom;
+    private ?string $name;
 
     #[ORM\ManyToMany(targetEntity: Film::class, mappedBy: 'genres')]
     private Collection $films;
@@ -32,14 +32,14 @@ class Genre
         return $this->id;
     }
 
-    public function getNom(): ?string
+    public function getName(): ?string
     {
-        return $this->nom;
+        return $this->name;
     }
 
-    public function setNom(string $nom): self
+    public function setName(string $name): self
     {
-        $this->nom = $nom;
+        $this->name = $name;
 
         return $this;
     }

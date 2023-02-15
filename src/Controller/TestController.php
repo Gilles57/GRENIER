@@ -17,9 +17,10 @@ class TestController extends AbstractController
     //---------------------- TEST EN COURS ------------------------------//
 
 
-    #[Route('/test/{titre}/{annee}', name: 'app_test')]
-    public function import_un_film(string $titre, string $annee)
+    #[Route('/test', name: 'app_test')]
+    public function import_un_film()
     {
-        return $this->render('test/test.html.twig');
+        $projects = [];
+        return $this->render('test/test.html.twig', compact ('projects'));
     }
 }

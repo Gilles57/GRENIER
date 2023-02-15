@@ -1,12 +1,36 @@
-{% extends '/base.html.twig' %}
-
-{% block title %}Test!{% endblock %}
-
-{% block body %}
-    <div style="background-color: #e3c8cf; min-height: 400px">
-        <div class="container">
-            <h1> Test </h1>
-           Rien pour l'instant
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Portfolio</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+   {% set projects = visite.oeuvres %}
+    <div class="container">
+        <h1>Mes projets</h1>
+        <div class="row">
+            {% for project in projects %}
+            <div class="col-md-4">
+                <div class="card mb-4 box-shadow">
+                    <img class="card-img-top" src="{{ project.image }}" alt="{{ project.title }}">
+                    <div class="card-body">
+                        <h3 class="card-title">{{ project.title }}</h3>
+                        <p class="card-text">{{ project.description }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+                                <a href="{{ project.url }}" class="btn btn-sm btn-outline-secondary">Voir le projet</a>
+                            </div>
+                            <small class="text-muted">{{ project.date }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
         </div>
     </div>
-{% endblock %}
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -80,6 +80,7 @@ class Film
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $date_originale = null;
 
+
     public function __construct()
     {
         $this->genres = new ArrayCollection();
@@ -360,5 +361,6 @@ class Film
 
         return $this;
     }
+
 
 }

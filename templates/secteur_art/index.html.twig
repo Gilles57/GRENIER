@@ -1,0 +1,27 @@
+{% extends '/base.html.twig' %}
+
+{% block title %}Expos, monuments, etc.{% endblock %}
+
+{% block body %}
+    <div class="jumbotron  jumbotron-fluid my-3 p-3 text-center">
+        <h1 class="display-4 fw-bold"><i class="fa-solid fa-photo-film"></i> Expos, monuments, etc. <i
+                    class="fa-solid fa-photo-film"></i></h1>
+        <p class="lead">Différents lieux ou expositions que j'ai visités</p>
+    </div>
+    <div class="container">
+        <div style="display: flex; flex-flow: row wrap;justify-content: space-around;">
+            {% for visite in visites %}
+{#                <a class="rubrique" href="{{ path('app_visite_show', {id: visite.id}) }}">#}
+                    <div class="card " style="width: 18rem;">
+                        <img class="card-img-top" src="{{ asset('uploads/visites/'~visite.media) }}" alt="Illustration de {{ visite.name }}" style ="height: 200px; width: 100%">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ visite.name }}</h5>
+                            <p class="card-text">{{ visite.description | u.truncate(30, '...', true ) }}</p>
+                            <a href="{{ path('app_visite_show', {id: visite.id}) }}" class="btn btn-secondary">Visiter</a>
+                        </div>
+                    </div>
+{#                </a>#}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

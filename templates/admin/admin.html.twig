@@ -4,8 +4,13 @@
 
 {% block body %}
     <div style="background-color: #e3c8cf; min-height: 400px">
+        {% include '/_partials/_menu_admin.html.twig' %}
+
         <div class="container">
             <h1> ADMINISTRATION </h1>
+
             {% dump(user) %}
+        </div>
+
     </div>
 {% endblock %}

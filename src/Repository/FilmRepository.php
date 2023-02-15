@@ -56,6 +56,8 @@ class FilmRepository extends ServiceEntityRepository
             ->getQuery();
     }
 
+
+
 //    /**
 //     * @return Film[] Returns an array of Film objects
 //     */
@@ -70,6 +72,7 @@ class FilmRepository extends ServiceEntityRepository
 //            ->getResult()
 //        ;
 //    }
+
 
 //    public function findOneBySomeField($value): ?Film
 //    {

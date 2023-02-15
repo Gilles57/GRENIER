@@ -19,16 +19,26 @@
     {% block javascripts %}
         {{ encore_entry_script_tags('app') }}
         {{ encore_entry_script_tags('custom') }}
-
-        {#        <script src="https://kit.fontawesome.com/1462ae8225.js" crossorigin="anonymous" defer></script>#}
+        <script>
+            const alerts = document.querySelectorAll('[class="alert"]')
+            for (const alert of alerts) {
+                setTimeout(function () {
+                    const bootstrapAlert = bootstrap.Alert.getOrCreateInstance(alert);
+                    bootstrapAlert.close();
+                }, 2000);
+            }
+        </script>
+        {#        <script src="https://kit.fontawesome.com/1462ae8225.js" crossorigin="anonymous" defer></script> #}
     {% endblock %}
 
 </head>
 <body>
 {% include '_partials/_bandeau.html.twig' %}
 {% include '_partials/_flash.html.twig' %}
-{% block body %}
-{% endblock body %}
+<div class="container">
+    {% block body %}
+    {% endblock body %}
+</div>
 {% include '_partials/_footer.html.twig' %}
 </body>
 </html>
