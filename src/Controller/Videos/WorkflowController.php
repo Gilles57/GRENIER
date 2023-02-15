@@ -189,10 +189,11 @@ class WorkflowController extends AbstractController
                                 int $importId,
     )
     {
+        $key = $this->getParameter('api_key_tmdb');
         $import = $this->importRepository->find($importId);
         $response = $this->client->request(
             'GET',
-            'https://api.themoviedb.org/3/movie/' . $dataId . '?api_key=c7924bfc3e4208e9e6eafb5beaee9940&language=fr'
+            'https://api.themoviedb.org/3/movie/' . $dataId . '?api_key='.$key.'&language=fr'
         );
         $data = json_decode($response->getContent(), true);
         $this->createFilm($data, $import);

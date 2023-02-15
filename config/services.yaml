@@ -7,6 +7,7 @@ parameters:
     affiches_directory: '%kernel.project_dir%/public/uploads/affiches'
     visites_directory: '%kernel.project_dir%/public/uploads/visites'
     oeuvres_directory: '%kernel.project_dir%/public/uploads/oeuvres'
+    api_key_tmdb: 'c7924bfc3e4208e9e6eafb5beaee9940'
 
 services:
     # default configuration for services in *this* file
