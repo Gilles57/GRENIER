@@ -62,4 +62,16 @@ class Photo
 
         return $this;
     }
+
+    public function getVisite(): ?Visite
+    {
+        return $this->visite;
+    }
+
+    public function setVisite(?Visite $visite): self
+    {
+        $this->visite = $visite;
+
+        return $this;
+    }
 }

@@ -46,7 +46,7 @@ class VisiteController extends AbstractController
             return $this->redirectToRoute('app_admin_visite_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('/admin/cruds/visite/new.html.twig', [
+        return $this->render('/admin/cruds/visite/new.html.twig', [
             'visite' => $visite,
             'form' => $form,
         ]);
@@ -88,7 +88,7 @@ class VisiteController extends AbstractController
             return $this->redirectToRoute('app_admin_visite_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('/admin/cruds/visite/edit.html.twig', [
+        return $this->render('/admin/cruds/visite/edit.html.twig', [
             'visite' => $visite,
             'form' => $form,
         ]);

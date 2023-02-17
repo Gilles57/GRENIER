@@ -11,11 +11,12 @@
             m'y intéresse.</p>
     </div>
 
-    <div class="container">
+    <div class="row">
 
-        <div style="display: flex; flex-flow: row wrap;justify-content: space-around;">
+        <div style="display: flex; flex-flow: row wrap;justify-content: space-around;  "
+             class=" d-flex">
 
-            <a class="rubrique" href="{{ path('app_recettes') }}">
+            <a class="rubrique" href="{{ path('app_recettes') }}" style="width: 15rem; height: 20rem">
                 <div class="card imgBx" style="width: 15rem; height: 15rem">
                     <img class="card-img-top"
                          src="{{ asset('/images/cards/DALL-Recettes.png') }}"

@@ -24,16 +24,24 @@ class VisiteType extends AbstractType
                     'label' => "Œuvres",
                     'choice_label' => 'name',
                     'multiple' => true,
+                    'expanded' => true,
                     'mapped' => false,
                     'required' => false,
                 ])
             ->add('media', FileType::class,
                 [
-                    'label' => false,
+                    'label' => "Illustration",
                     'multiple' => false,
                     'mapped' => false,
                     'required' => false,
-                ]);
+                ])
+             ->add('photos', FileType::class,
+            [
+                'label'=> false,
+                'multiple' => true,
+                'mapped'=> false,
+                'required' => false,
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

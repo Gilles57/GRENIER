@@ -34,6 +34,7 @@ class Visite
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $media = null;
 
+
     public function __construct()
     {
         $this->oeuvres = new ArrayCollection();
@@ -133,4 +134,6 @@ class Visite
 
         return $this;
     }
+
+
 }
